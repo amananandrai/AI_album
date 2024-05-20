@@ -6,12 +6,14 @@ export const GalleryContext = createContext<{
     images: string[];
     totalPages: number;
     setImages: React.Dispatch<React.SetStateAction<string[]>>;
-    loadPage: (page: number) => Promise<void>
+    fetchImages: (page: number) => Promise<ImageResponse>
 }>({
     images: [],
     totalPages: 1,
     setImages: () => { },
-    loadPage: async () => { }
+    fetchImages: function (page: number): Promise<ImageResponse> {
+        throw new Error("Function not implemented.");
+    }
 });
 
 export function GalleryProvider({ children }: { children: React.ReactNode }) {
@@ -24,16 +26,10 @@ export function GalleryProvider({ children }: { children: React.ReactNode }) {
         const data: ImageResponse = await res.json();
         return data;
     }
-    const loadPage = (async (page: number) => {
-        const data = await fetchImages(page);
-        setImages(prev => [...data.rows, ...prev]);
-
-    })
     useEffect(() => {
         fetchImages(0).then(data => {
             setImages(data.rows);
             setTotalPage(Math.ceil(data.total / LIMIT))
-
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -41,7 +37,7 @@ export function GalleryProvider({ children }: { children: React.ReactNode }) {
     return <GalleryContext.Provider value={{
         images,
         setImages,
-        loadPage,
+        fetchImages,
         totalPages
     }}>
         {children}

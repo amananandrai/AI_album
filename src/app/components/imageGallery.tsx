@@ -3,14 +3,18 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { ImageResponse } from "../types/ExtendNextApiReqeuest";
 
 export function ImageGallery() {
     const [images, setImages] = useState<string[]>([]);
 
     const fetchImages = async (offset: number) => {
         const res = await fetch("/api/images?offset=" + offset);
-        const data = await res.json();
-        setImages(prev => [...data.resp.rows, ...prev]);
+        const data: ImageResponse = await res.json();
+        console.debug("🚀  file: imageGallery.tsx:14  fetchImages  data:", data);
+
+        setImages(prev => [...data.rows, ...prev]);
+        return data.total;
     }
 
 
@@ -26,7 +30,7 @@ export function ImageGallery() {
                             <GalleryImage src={src} loading="eager" fullscreen={false} />
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-full max-h-full">
+                    <DialogContent className="max-w-screen max-h-screen w-auto h-auto aspect-auto m-4">
                         <GalleryImage src={src} loading="lazy" fullscreen={true} />
                     </DialogContent>
 
@@ -48,9 +52,9 @@ const GalleryImage = ({ src, loading, fullscreen }: GalleryImageProp) => {
         <Image
             alt="gallery"
             src={src}
-            objectFit="cover"
+            objectFit={!fullscreen ? "cover" : "contain"}
             layout='responsive'
-            className={`h-auto max-w-full top-0 left-0 object-cover rounded-lg ${!fullscreen && "aspect-square"}`}
+            className={`top-0 left-0 rounded-lg ${fullscreen && "aspect-auto h-full w-auto"} ${!fullscreen && "aspect-square object-cover h-auto max-w-full"}`}
             sizes="100vw"
             quality={100}
             placeholder="blur"

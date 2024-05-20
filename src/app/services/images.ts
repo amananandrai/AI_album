@@ -1,21 +1,37 @@
-import { connect } from 'mongoose';
+import { connect, Connection, Mongoose } from 'mongoose';
 import UploadedImage, { IFile } from '../models/Files';
 import { ImageResponse } from '../types/ExtendNextApiReqeuest';
 
+let dbConnection: Mongoose | null = null;
+
 export async function getImages(limit: number | null, offset: number | null) {
-    console.debug("🚀  file: images.ts:11  getImages  limit:", limit, "offset:", offset);
-    console.debug("🚀  file: images.ts:11  getImages  process.env.MONGODB_URI:", process.env.MONGODB_URI);
-    await connect(process.env.MONGODB_URI || "")
-    let total = await UploadedImage.find({ isDeleted: false }).countDocuments();
-    let images = [];
-    if (limit !== null && offset !== null) {
-        images = await UploadedImage.find({ isDeleted: false }).sort({ createdAt: -1 }).limit(limit).skip(offset);
-    } else {
-        images = await UploadedImage.find({ isDeleted: false }).sort({ createdAt: -1 })
+    try {
+        // Establish connection if not already established
+        if (!dbConnection) {
+            dbConnection = await connect(process.env.MONGODB_URI || "", {
+                user: process.env.MONGODB_USER,
+                pass: process.env.MONGODB_PASS,
+                dbName: process.env.MONGODB_DBNAME,
+            });
+        }
+
+        // Fetch total count of non-deleted images
+        const total = await UploadedImage.find({ isDeleted: false }).countDocuments();
+
+        // Fetch images with pagination if limit and offset are provided
+        let imagesQuery = UploadedImage.find({ isDeleted: false }).sort({ createdAt: -1 });
+        if (limit !== null && offset !== null) {
+            imagesQuery = imagesQuery.limit(limit).skip(offset);
+        }
+        const images = await imagesQuery;
+
+        // Map the images to their URI
+        const imageUris = images.map((image: IFile) => image.uri);
+
+        // Prepare the response
+        const resp: ImageResponse = { rows: imageUris, total };
+        return resp;
+    } catch (e) {
+        throw e;
     }
-    images = images.map((image: IFile) => image.uri);
-    const resp: ImageResponse = { rows: images, total }
-    return resp;
 }
-
-

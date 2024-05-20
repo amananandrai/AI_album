@@ -2,25 +2,11 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { ImageResponse } from "../types/ExtendNextApiReqeuest";
+import { useContext } from "react";
+import { GalleryContext } from "../context/gallery";
 
 export function ImageGallery() {
-    const [images, setImages] = useState<string[]>([]);
-
-    const fetchImages = async (offset: number) => {
-        const res = await fetch("/api/images?offset=" + offset);
-        const data: ImageResponse = await res.json();
-        console.debug("🚀  file: imageGallery.tsx:14  fetchImages  data:", data);
-
-        setImages(prev => [...data.rows, ...prev]);
-        return data.total;
-    }
-
-
-    useEffect(() => {
-        fetchImages(0);
-    }, [])
+    const { images } = useContext(GalleryContext);
     return (
         <div className="grid gap-1  md:grid-cols-3 grid-rows-3">
             {images.map((src, index) => (
@@ -30,7 +16,7 @@ export function ImageGallery() {
                             <GalleryImage src={src} loading="eager" fullscreen={false} />
                         </Button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-screen max-h-screen w-auto h-auto aspect-auto m-4">
+                    <DialogContent className="max-w-screen max-h-screen w-auto h-auto scale-100 m-4">
                         <GalleryImage src={src} loading="lazy" fullscreen={true} />
                     </DialogContent>
 
@@ -52,11 +38,11 @@ const GalleryImage = ({ src, loading, fullscreen }: GalleryImageProp) => {
         <Image
             alt="gallery"
             src={src}
-            objectFit={!fullscreen ? "cover" : "contain"}
+            objectFit={!fullscreen ? "cover" : "cover"}
             layout='responsive'
-            className={`top-0 left-0 rounded-lg ${fullscreen && "aspect-auto h-full w-auto"} ${!fullscreen && "aspect-square object-cover h-auto max-w-full"}`}
+            className={`top-0 left-0 rounded-lg ${fullscreen && "aspect-auto h-auto w-auto object-cover"} ${!fullscreen && "aspect-square object-cover h-auto max-w-full"}`}
             sizes="100vw"
-            quality={100}
+            // quality={100}
             placeholder="blur"
             loading={loading}
             blurDataURL={src}

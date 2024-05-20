@@ -6,12 +6,12 @@ export const GalleryContext = createContext<{
     images: string[];
     totalPages: number;
     setImages: React.Dispatch<React.SetStateAction<string[]>>;
-    loadMore: (page: number) => Promise<void>
+    loadPage: (page: number) => Promise<void>
 }>({
     images: [],
     totalPages: 1,
     setImages: () => { },
-    loadMore: async () => { }
+    loadPage: async () => { }
 });
 
 export function GalleryProvider({ children }: { children: React.ReactNode }) {
@@ -24,7 +24,7 @@ export function GalleryProvider({ children }: { children: React.ReactNode }) {
         const data: ImageResponse = await res.json();
         return data;
     }
-    const loadMore = (async (page: number) => {
+    const loadPage = (async (page: number) => {
         const data = await fetchImages(page);
         setImages(prev => [...data.rows, ...prev]);
 
@@ -41,7 +41,7 @@ export function GalleryProvider({ children }: { children: React.ReactNode }) {
     return <GalleryContext.Provider value={{
         images,
         setImages,
-        loadMore,
+        loadPage,
         totalPages
     }}>
         {children}

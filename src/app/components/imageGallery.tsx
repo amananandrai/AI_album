@@ -8,11 +8,11 @@ import { GalleryContext } from "../context/gallery";
 export function ImageGallery() {
     const { images } = useContext(GalleryContext);
     return (
-        <div className="grid gap-1  md:grid-cols-3 grid-rows-3">
+        <div className="grid gap-0.5  md:grid-cols-3 grid-rows-3">
             {images.map((src, index) => (
                 <Dialog key={index}>
                     <DialogTrigger asChild>
-                        <Button className="w-full h-full bg-transparent hover:border-primary-500">
+                        <Button className="w-full h-full bg-transparent p-1 m-0">
                             <GalleryImage src={src} loading="eager" fullscreen={false} />
                         </Button>
                     </DialogTrigger>

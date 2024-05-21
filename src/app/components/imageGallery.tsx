@@ -42,7 +42,7 @@ export function ImageGallery() {
                                 id="extralarge-modal"
                                 className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center w-full p-4 overflow-x-hidden overflow-y-auto h-[calc(100%-1rem)] max-h-full"
                             >
-                                <div className="relative w-full max-w-7xl max-h-full">
+                                <div className="relative w-full max-w-2xl max-h-auto">
                                     <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
                                         <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                                             <button
@@ -154,7 +154,7 @@ const GalleryImage = ({ src, loading, fullscreen }: GalleryImageProp) => {
             src={src}
             objectFit={!fullscreen ? "cover" : "cover"}
             layout='responsive'
-            className={`top-0 left-0 rounded-lg ${fullscreen && "aspect-auto h-auto w-auto object-cover"} ${!fullscreen && "aspect-square object-cover h-auto max-w-full"}`}
+            className={`top-0 left-0 rounded-lg ${fullscreen && "aspect-auto h-full w-auto object-cover"} ${!fullscreen && "aspect-square object-cover h-auto max-w-full"}`}
             sizes="100vw"
             // quality={100}
             placeholder="blur"

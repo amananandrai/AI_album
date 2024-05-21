@@ -60,9 +60,56 @@ export function ImageGallery() {
         return <div>Loading...</div>
     }
 
+    const renderPageNumbers = () => {
+        const pageNumbers = [];
+        const maxPagesToShow = 5;
+
+        if (totalPages <= maxPagesToShow) {
+            for (let i = 0; i < totalPages; i++) {
+                pageNumbers.push(
+                    <Button
+                        key={i}
+                        variant={page === i ? "default" : "ghost"}
+                        onClick={() => setPage(i)}
+                    >
+                        <span>{i + 1}</span>
+                    </Button>
+                );
+            }
+        } else {
+            let startPage = Math.max(0, page - Math.floor(maxPagesToShow / 2));
+            let endPage = Math.min(totalPages, startPage + maxPagesToShow);
+
+            if (endPage - startPage < maxPagesToShow) {
+                startPage = Math.max(0, endPage - maxPagesToShow);
+            }
+
+            for (let i = startPage; i < endPage; i++) {
+                pageNumbers.push(
+                    <Button
+                        key={i}
+                        variant={page === i ? "default" : "ghost"}
+                        onClick={() => setPage(i)}
+                    >
+                        <span>{i + 1}</span>
+                    </Button>
+                );
+            }
+
+            if (startPage > 0) {
+                pageNumbers.unshift(<Button key="start-ellipsis" variant="ghost">...</Button>);
+            }
+            if (endPage < totalPages) {
+                pageNumbers.push(<Button key="end-ellipsis" variant="ghost">...</Button>);
+            }
+        }
+
+        return pageNumbers;
+    };
+
     return (
         <div className="flex justify-center items-center flex-col">
-            <div className="grid gap-0.5  sm:grid-cols-2 md:grid-cols-3 grid-rows-3">
+            <div className="grid gap-0.5 sm:grid-cols-2 md:grid-cols-3 grid-rows-3">
                 {images.map((src, index) => (
                     <div key={index}>
                         <Button
@@ -118,15 +165,7 @@ export function ImageGallery() {
                         <span>Previous</span>
                     </Button>
                 </div>
-                {Array.from({ length: totalPages }, (_, pageNumber) => (
-                    <div className="flex justify-center items-center" key={pageNumber}>
-                        <Button variant="ghost"
-                            onClick={() => setPage(pageNumber)}
-                        >
-                            <span>{pageNumber + 1}</span>
-                        </Button>
-                    </div>
-                ))}
+                {renderPageNumbers()}
                 <div className="flex justify-center items-center">
                     <Button variant="ghost"
                         onClick={() => page < totalPages - 1 && setPage(page + 1)}

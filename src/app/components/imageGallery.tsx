@@ -4,7 +4,6 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Image from "next/image";
 import { useContext, useEffect, useState, useRef } from "react";
 import { GalleryContext } from "../context/gallery";
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export function ImageGallery() {
@@ -12,7 +11,7 @@ export function ImageGallery() {
     const { images, totalPages, fetchImages, setImages } = useContext(GalleryContext);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalImage, setModalImage] = useState("");
-    const modalRef = useRef(null);
+    const modalRef = useRef<HTMLDivElement>(null);
 
     const toggleModal = (src: string) => {
         setIsModalOpen(!isModalOpen);
@@ -31,7 +30,7 @@ export function ImageGallery() {
     };
 
     const handleClickOutside = (event: MouseEvent) => {
-        if (modalRef.current && !modalRef.current.contains(event.target)) {
+        if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
             handleCloseModal();
         }
     };
@@ -119,7 +118,7 @@ export function ImageGallery() {
                         <span>Previous</span>
                     </Button>
                 </div>
-                {[...Array(totalPages).keys()].map((pageNumber) => (
+                {Array.from({ length: totalPages }, (_, pageNumber) => (
                     <div className="flex justify-center items-center" key={pageNumber}>
                         <Button variant="ghost"
                             onClick={() => setPage(pageNumber)}

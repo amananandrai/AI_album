@@ -29,7 +29,7 @@ export function ImageGallery() {
     }
     return (
         <div className="flex justify-center items-center flex-col">
-            <div className="grid gap-0.5  md:grid-cols-3 grid-rows-3">
+            <div className="grid gap-0.5  sm:grid-cols-2 md:grid-cols-3 grid-rows-3">
                 {images.map((src, index) => (
                     <>
                         <Button key={index}

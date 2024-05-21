@@ -36,6 +36,7 @@ export function ImageGallery() {
     };
 
     useEffect(() => {
+        setImages([]); // Clear the images before loading new ones
         fetchImages(page).then((data) => {
             setImages(data.rows);
         });

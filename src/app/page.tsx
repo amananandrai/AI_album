@@ -19,7 +19,3 @@ export default function Home() {
     </main>
   );
 }
-      <ImageGallery />
-    </main>
-  );
-}

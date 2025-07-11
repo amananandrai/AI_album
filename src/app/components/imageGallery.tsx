@@ -184,20 +184,18 @@ export function ImageGallery() {
             <div className="flex flex-wrap gap-2 justify-center items-center">
                 <div className="flex justify-center items-center">
                     <Button 
-                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent"
                         disabled={page === 0}
                         onClick={() => setPage(0)}
-                        className="flex items-center space-x-1"
+                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-1"
                     >
                         <span>First</span>
                     </Button>
                 </div>
                 <div className="flex justify-center items-center">
                     <Button 
-                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent"
                         disabled={page === 0}
                         onClick={() => page > 0 && setPage(page - 1)}
-                        className="flex items-center space-x-1"
+                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-1"
                     >
                         <ChevronLeft className="h-4 w-4" />
                         <span>Previous</span>
@@ -206,10 +204,9 @@ export function ImageGallery() {
                 {renderPageNumbers()}
                 <div className="flex justify-center items-center">
                     <Button 
-                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent"
                         disabled={page >= totalPages - 1}
                         onClick={() => page < totalPages - 1 && setPage(page + 1)}
-                        className="flex items-center space-x-1"
+                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-1"
                     >
                         <span>Next</span>
                         <ChevronRight className="h-4 w-4" />
@@ -217,10 +214,9 @@ export function ImageGallery() {
                 </div>
                 <div className="flex justify-center items-center">
                     <Button 
-                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent"
                         disabled={page >= totalPages - 1}
                         onClick={() => setPage(totalPages - 1)}
-                        className="flex items-center space-x-1"
+                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-1"
                     >
                         <span>Last</span>
                     </Button>

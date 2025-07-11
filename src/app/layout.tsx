@@ -1,8 +1,11 @@
+'use client';
+import React from 'react';
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { GalleryProvider } from "./context/gallery";
 import { Navbar } from "@/components/ui/navbar";
+import { ThemeProvider } from "./context/theme";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,10 +28,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <GalleryProvider>
-        <body className={inter.className}>
-          <Navbar />
-          {children}
-        </body>
+        <ThemeProvider>
+          <body className={inter.className}>
+            <Navbar />
+            {children}
+          </body>
+        </ThemeProvider>
       </GalleryProvider>
 
     </html>

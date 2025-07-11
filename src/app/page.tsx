@@ -31,16 +31,16 @@ export default function Home() {
           <div className="text-center md:text-right">
             <h2 className="text-2xl font-bold mb-2">Contact</h2>
             <div className="flex justify-center md:justify-end gap-6 mt-2">
-              <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-tertiary transition-colors">
+              <a href="https://www.instagram.com/ai_man_and_art/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-tertiary transition-colors">
                 <Instagram className="h-7 w-7" />
               </a>
-              <a href="https://youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="hover:text-tertiary transition-colors">
+              <a href="https://www.youtube.com/@ai_man_0822" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="hover:text-tertiary transition-colors">
                 <Youtube className="h-7 w-7" />
               </a>
-              <a href="https://pinterest.com/" target="_blank" rel="noopener noreferrer" aria-label="Pinterest" className="hover:text-tertiary transition-colors">
+              <a href="https://www.pinterest.com/aiman25842/" target="_blank" rel="noopener noreferrer" aria-label="Pinterest" className="hover:text-tertiary transition-colors">
                 <Globe className="h-7 w-7" />
               </a>
-              <a href="mailto:info@example.com" aria-label="Email" className="hover:text-tertiary transition-colors">
+              <a href="mailto:aiman25842@gmail.com" aria-label="Email" className="hover:text-tertiary transition-colors">
                 <Mail className="h-7 w-7" />
               </a>
             </div>

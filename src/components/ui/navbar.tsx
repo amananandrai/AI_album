@@ -4,10 +4,12 @@ import { useState } from 'react';
 import { Button } from './button';
 import { Menu, X, Image, Home, Info, Contact, Sun, Moon } from 'lucide-react';
 import { useTheme } from '@/app/context/theme';
+import { usePathname } from 'next/navigation';
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const pathname = usePathname();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -36,11 +38,12 @@ export function Navbar() {
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => {
               const IconComponent = item.icon;
+              const isActive = pathname === item.href;
               return (
                 <a
                   key={item.name}
                   href={item.href}
-                  className="flex items-center space-x-1 text-accent hover:text-tertiary transition-colors duration-200 font-medium"
+                  className={`flex items-center space-x-1 font-medium transition-colors duration-200 ${isActive ? 'text-tertiary font-bold underline' : 'text-accent hover:text-tertiary'}`}
                 >
                   <IconComponent className="h-4 w-4" />
                   <span>{item.name}</span>
@@ -93,11 +96,12 @@ export function Navbar() {
             <div className="px-2 pt-2 pb-3 space-y-1 bg-primary border-t border-secondary">
               {navItems.map((item) => {
                 const IconComponent = item.icon;
+                const isActive = pathname === item.href;
                 return (
                   <a
                     key={item.name}
                     href={item.href}
-                    className="flex items-center space-x-2 px-3 py-2 text-accent hover:text-tertiary hover:bg-accent rounded-md transition-colors duration-200 font-medium"
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-md transition-colors duration-200 font-medium ${isActive ? 'text-tertiary font-bold underline' : 'text-accent hover:text-tertiary hover:bg-accent'}`}
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <IconComponent className="h-4 w-4" />

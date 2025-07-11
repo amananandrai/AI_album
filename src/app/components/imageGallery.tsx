@@ -49,6 +49,7 @@ export function ImageGallery() {
         fetchImages(page, sortBy, sortOrder).then((data) => {
             setImages(data.rows);
         });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, sortBy, sortOrder]);
 
     useEffect(() => {
@@ -64,6 +65,7 @@ export function ImageGallery() {
             document.removeEventListener('keydown', handleKeyDown);
             document.removeEventListener('mousedown', handleClickOutside);
         };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isModalOpen]);
 
     if (images.length === 0) {

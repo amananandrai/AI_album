@@ -109,13 +109,13 @@ export function ImageGallery() {
     };
 
     return (
-        <div className="flex justify-center items-center flex-col">
-            <div className="grid gap-0.5 sm:grid-cols-2 md:grid-cols-3 grid-rows-3">
+        <div className="flex justify-center items-center flex-col space-y-8">
+            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 w-full max-w-6xl">
                 {images.map((src, index) => (
-                    <div key={index}>
+                    <div key={index} className="group">
                         <Button
                             onClick={() => toggleModal(src)}
-                            data-modal-target="extralarge-modal" data-modal-toggle="extralarge-modal" className="w-full h-full bg-transparent p-1 m-0">
+                            className="w-full h-full bg-transparent p-0 m-0 hover:scale-105 transition-transform duration-300 rounded-lg overflow-hidden shadow-lg hover:shadow-xl">
                             <GalleryImage src={src} loading="eager" fullscreen={false} />
                         </Button>
                     </div>
@@ -123,14 +123,14 @@ export function ImageGallery() {
                 {isModalOpen && (
                     <div
                         id="extralarge-modal"
-                        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center w-full p-4 overflow-x-hidden overflow-y-auto h-[calc(100%-1rem)] max-h-full"
+                        className="fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/80 backdrop-blur-sm"
                     >
-                        <div className="relative w-full max-w-2xl max-h-auto" ref={modalRef}>
-                            <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
-                                <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                        <div className="relative w-full max-w-4xl max-h-[90vh]" ref={modalRef}>
+                            <div className="relative bg-white rounded-lg shadow-2xl">
+                                <div className="flex items-center justify-between p-4 border-b">
                                     <button
                                         type="button"
-                                        className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                                        className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center transition-colors"
                                         onClick={handleCloseModal}
                                     >
                                         <svg
@@ -157,10 +157,13 @@ export function ImageGallery() {
                     </div>
                 )}
             </div>
-            <div className="flex gap-1">
+            <div className="flex flex-wrap gap-2 justify-center items-center">
                 <div className="flex justify-center items-center">
-                    <Button variant="ghost"
+                    <Button 
+                        variant="outline"
+                        disabled={page === 0}
                         onClick={() => page > 0 && setPage(page - 1)}
+                        className="flex items-center space-x-1"
                     >
                         <ChevronLeft className="h-4 w-4" />
                         <span>Previous</span>
@@ -168,8 +171,11 @@ export function ImageGallery() {
                 </div>
                 {renderPageNumbers()}
                 <div className="flex justify-center items-center">
-                    <Button variant="ghost"
+                    <Button 
+                        variant="outline"
+                        disabled={page >= totalPages - 1}
                         onClick={() => page < totalPages - 1 && setPage(page + 1)}
+                        className="flex items-center space-x-1"
                     >
                         <span>Next</span>
                         <ChevronRight className="h-4 w-4" />
@@ -193,9 +199,8 @@ const GalleryImage = ({ src, loading, fullscreen }: GalleryImageProp) => {
             src={src}
             objectFit={!fullscreen ? "cover" : "cover"}
             layout='responsive'
-            className={`top-0 left-0 rounded-lg ${fullscreen && "aspect-auto h-full w-auto object-cover"} ${!fullscreen && "aspect-square object-cover h-auto max-w-full"}`}
+            className={`${fullscreen ? "aspect-auto h-full w-auto object-contain max-h-[70vh]" : "aspect-square object-cover h-auto max-w-full rounded-lg"}`}
             sizes="100vw"
-            // quality={100}
             placeholder="blur"
             loading={loading}
             blurDataURL={src}

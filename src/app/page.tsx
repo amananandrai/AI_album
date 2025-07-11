@@ -2,7 +2,7 @@ import { ImageGallery } from "./components/imageGallery";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-primary text-accent py-8">
+    <main className="min-h-screen bg-accent text-primary py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-accent mb-4">

@@ -81,7 +81,11 @@ export function ImageGallery() {
                 pageNumbers.push(
                     <Button
                         key={i}
-                        variant={page === i ? "default" : "ghost"}
+                        className={
+                          page === i
+                            ? "bg-tertiary text-accent font-bold border border-primary"
+                            : "bg-secondary text-accent hover:bg-tertiary hover:text-accent"
+                        }
                         onClick={() => setPage(i)}
                     >
                         <span>{i + 1}</span>
@@ -100,7 +104,11 @@ export function ImageGallery() {
                 pageNumbers.push(
                     <Button
                         key={i}
-                        variant={page === i ? "default" : "ghost"}
+                        className={
+                          page === i
+                            ? "bg-tertiary text-accent font-bold border border-primary"
+                            : "bg-secondary text-accent hover:bg-tertiary hover:text-accent"
+                        }
                         onClick={() => setPage(i)}
                     >
                         <span>{i + 1}</span>
@@ -109,10 +117,10 @@ export function ImageGallery() {
             }
 
             if (startPage > 0) {
-                pageNumbers.unshift(<Button key="start-ellipsis" variant="ghost">...</Button>);
+                pageNumbers.unshift(<Button key="start-ellipsis" className="bg-accent text-primary hover:bg-tertiary hover:text-accent">...</Button>);
             }
             if (endPage < totalPages) {
-                pageNumbers.push(<Button key="end-ellipsis" variant="ghost">...</Button>);
+                pageNumbers.push(<Button key="end-ellipsis" className="bg-accent text-primary hover:bg-tertiary hover:text-accent">...</Button>);
             }
         }
 
@@ -176,7 +184,7 @@ export function ImageGallery() {
             <div className="flex flex-wrap gap-2 justify-center items-center">
                 <div className="flex justify-center items-center">
                     <Button 
-                        variant="outline"
+                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent"
                         disabled={page === 0}
                         onClick={() => setPage(0)}
                         className="flex items-center space-x-1"
@@ -186,7 +194,7 @@ export function ImageGallery() {
                 </div>
                 <div className="flex justify-center items-center">
                     <Button 
-                        variant="outline"
+                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent"
                         disabled={page === 0}
                         onClick={() => page > 0 && setPage(page - 1)}
                         className="flex items-center space-x-1"
@@ -198,7 +206,7 @@ export function ImageGallery() {
                 {renderPageNumbers()}
                 <div className="flex justify-center items-center">
                     <Button 
-                        variant="outline"
+                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent"
                         disabled={page >= totalPages - 1}
                         onClick={() => page < totalPages - 1 && setPage(page + 1)}
                         className="flex items-center space-x-1"
@@ -209,7 +217,7 @@ export function ImageGallery() {
                 </div>
                 <div className="flex justify-center items-center">
                     <Button 
-                        variant="outline"
+                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent"
                         disabled={page >= totalPages - 1}
                         onClick={() => setPage(totalPages - 1)}
                         className="flex items-center space-x-1"

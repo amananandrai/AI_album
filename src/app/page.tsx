@@ -1,5 +1,5 @@
 import { ImageGallery } from "./components/imageGallery";
-import { Instagram, Youtube, Pinterest, Mail } from 'lucide-react';
+import { Instagram, Youtube, Globe, Mail } from 'lucide-react';
 
 export default function Home() {
   return (
@@ -38,7 +38,7 @@ export default function Home() {
                 <Youtube className="h-7 w-7" />
               </a>
               <a href="https://pinterest.com/" target="_blank" rel="noopener noreferrer" aria-label="Pinterest" className="hover:text-tertiary transition-colors">
-                <Pinterest className="h-7 w-7" />
+                <Globe className="h-7 w-7" />
               </a>
               <a href="mailto:info@example.com" aria-label="Email" className="hover:text-tertiary transition-colors">
                 <Mail className="h-7 w-7" />

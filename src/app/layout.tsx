@@ -1,5 +1,3 @@
-'use client';
-import React from 'react';
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -27,15 +25,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <GalleryProvider>
-        <ThemeProvider>
-          <body className={inter.className}>
+      <body className={inter.className}>
+        <GalleryProvider>
+          <ThemeProvider>
             <Navbar />
             {children}
-          </body>
-        </ThemeProvider>
-      </GalleryProvider>
-
+          </ThemeProvider>
+        </GalleryProvider>
+      </body>
     </html>
   );
 }

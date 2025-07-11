@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { GalleryProvider } from "./context/gallery";
 import { Navbar } from "@/components/ui/navbar";
-import { ThemeProvider } from "./context/theme";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,31 +23,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  var theme = localStorage.getItem('theme');
-                  if (theme === 'dark') {
-                    document.documentElement.classList.add('dark');
-                  } else {
-                    document.documentElement.classList.remove('dark');
-                  }
-                } catch (e) {}
-              })();
-            `,
-          }}
-        />
-      </head>
+    <html lang="en">
       <body className={inter.className}>
         <GalleryProvider>
-          <ThemeProvider>
-            <Navbar />
-            {children}
-          </ThemeProvider>
+          <Navbar />
+          {children}
         </GalleryProvider>
       </body>
     </html>

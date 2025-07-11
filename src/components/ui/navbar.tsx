@@ -2,12 +2,10 @@
 
 import { useState } from 'react';
 import { Button } from './button';
-import { Menu, X, Image, Home, Info, Contact, Sun, Moon } from 'lucide-react';
-import { useTheme } from '@/app/context/theme';
+import { Menu, X, Image, Home, Info, Contact } from 'lucide-react';
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -47,16 +45,6 @@ export function Navbar() {
                 </a>
               );
             })}
-            {/* Theme Toggle Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              aria-label="Toggle theme"
-              className="ml-4 text-accent hover:text-tertiary"
-            >
-              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            </Button>
           </div>
 
           {/* Mobile menu button */}
@@ -73,16 +61,6 @@ export function Navbar() {
               ) : (
                 <Menu className="h-6 w-6" />
               )}
-            </Button>
-            {/* Theme Toggle Button for Mobile */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={toggleTheme}
-              aria-label="Toggle theme"
-              className="text-accent hover:text-tertiary"
-            >
-              {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </Button>
           </div>
         </div>

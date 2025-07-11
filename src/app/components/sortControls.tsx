@@ -46,15 +46,15 @@ export function SortControls({ sortBy, sortOrder, onSortChange }: SortControlsPr
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6 p-4 bg-white rounded-lg shadow-sm border border-gray-200">
+    <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6 p-4 bg-secondary text-accent rounded-lg shadow-sm border border-primary">
       <div className="flex items-center gap-2 text-gray-700">
-        <ArrowUpDown className="h-5 w-5" />
-        <span className="font-medium">Sort by:</span>
+        <ArrowUpDown className="h-5 w-5 text-accent" />
+        <span className="font-medium text-accent">Sort by:</span>
       </div>
       
       <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
         <Select value={sortBy} onValueChange={handleSortByChange}>
-          <SelectTrigger className="w-full sm:w-[180px]">
+          <SelectTrigger className="w-full sm:w-[180px] bg-secondary text-accent hover:bg-tertiary hover:text-accent border border-primary">
             <SelectValue placeholder="Sort by">
               <div className="flex items-center gap-2">
                 {sortOptions.find(opt => opt.value === sortBy)?.icon && (
@@ -70,7 +70,7 @@ export function SortControls({ sortBy, sortOrder, onSortChange }: SortControlsPr
             {sortOptions.map((option) => {
               const IconComponent = option.icon;
               return (
-                <SelectItem key={option.value} value={option.value}>
+                <SelectItem key={option.value} value={option.value} className="bg-secondary text-accent hover:bg-tertiary hover:text-accent">
                   <div className="flex items-center gap-2">
                     <IconComponent className="h-4 w-4" />
                     {option.label}
@@ -82,7 +82,7 @@ export function SortControls({ sortBy, sortOrder, onSortChange }: SortControlsPr
         </Select>
 
         <Select value={sortOrder} onValueChange={handleSortOrderChange}>
-          <SelectTrigger className="w-full sm:w-[160px]">
+          <SelectTrigger className="w-full sm:w-[160px] bg-secondary text-accent hover:bg-tertiary hover:text-accent border border-primary">
             <SelectValue>
               {getCurrentOrderOption()}
             </SelectValue>
@@ -90,18 +90,18 @@ export function SortControls({ sortBy, sortOrder, onSortChange }: SortControlsPr
           <SelectContent>
             {sortBy === 'likes' ? (
               <>
-                <SelectItem value="desc">Most Popular</SelectItem>
-                <SelectItem value="asc">Least Popular</SelectItem>
+                <SelectItem value="desc" className="bg-secondary text-accent hover:bg-tertiary hover:text-accent">Most Popular</SelectItem>
+                <SelectItem value="asc" className="bg-secondary text-accent hover:bg-tertiary hover:text-accent">Least Popular</SelectItem>
               </>
             ) : sortBy === 'fileName' ? (
               <>
-                <SelectItem value="asc">A to Z</SelectItem>
-                <SelectItem value="desc">Z to A</SelectItem>
+                <SelectItem value="asc" className="bg-secondary text-accent hover:bg-tertiary hover:text-accent">A to Z</SelectItem>
+                <SelectItem value="desc" className="bg-secondary text-accent hover:bg-tertiary hover:text-accent">Z to A</SelectItem>
               </>
             ) : (
               <>
-                <SelectItem value="desc">Newest First</SelectItem>
-                <SelectItem value="asc">Oldest First</SelectItem>
+                <SelectItem value="desc" className="bg-secondary text-accent hover:bg-tertiary hover:text-accent">Newest First</SelectItem>
+                <SelectItem value="asc" className="bg-secondary text-accent hover:bg-tertiary hover:text-accent">Oldest First</SelectItem>
               </>
             )}
           </SelectContent>

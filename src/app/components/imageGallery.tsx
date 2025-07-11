@@ -5,9 +5,12 @@ import Image from "next/image";
 import { useContext, useEffect, useState, useRef } from "react";
 import { GalleryContext } from "../context/gallery";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { SortControls } from "./sortControls";
 
 export function ImageGallery() {
     const [page, setPage] = useState(0);
+    const [sortBy, setSortBy] = useState('createdAt');
+    const [sortOrder, setSortOrder] = useState('desc');
     const { images, totalPages, fetchImages, setImages } = useContext(GalleryContext);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalImage, setModalImage] = useState("");
@@ -21,6 +24,12 @@ export function ImageGallery() {
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setModalImage("");
+    };
+
+    const handleSortChange = (newSortBy: string, newSortOrder: string) => {
+        setSortBy(newSortBy);
+        setSortOrder(newSortOrder);
+        setPage(0); // Reset to first page when sorting changes
     };
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -37,10 +46,10 @@ export function ImageGallery() {
 
     useEffect(() => {
         setImages([]); // Clear the images before loading new ones
-        fetchImages(page).then((data) => {
+        fetchImages(page, sortBy, sortOrder).then((data) => {
             setImages(data.rows);
         });
-    }, [page]);
+    }, [page, sortBy, sortOrder]);
 
     useEffect(() => {
         if (isModalOpen) {
@@ -110,6 +119,11 @@ export function ImageGallery() {
 
     return (
         <div className="flex justify-center items-center flex-col space-y-8">
+            <SortControls 
+                sortBy={sortBy}
+                sortOrder={sortOrder}
+                onSortChange={handleSortChange}
+            />
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 w-full max-w-6xl">
                 {images.map((src, index) => (
                     <div key={index} className="group">

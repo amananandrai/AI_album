@@ -7,7 +7,9 @@ export async function GET(request: NextRequest) {
         const params = request.nextUrl.searchParams;
         const limit = parseInt(params.get("limit") || "9");
         const offset = parseInt(params.get("offset") || "0");
-        const resp: ImageResponse = await getImages(limit, offset);
+        const sortBy = params.get("sortBy") || "createdAt";
+        const sortOrder = params.get("sortOrder") || "desc";
+        const resp: ImageResponse = await getImages(limit, offset, sortBy, sortOrder);
         return Response.json(resp, {
             status: 200, headers: {
                 'Cache-Control': 'public, max-age=60, stale-while-revalidate=10'

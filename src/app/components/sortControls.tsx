@@ -3,6 +3,7 @@
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowUpDown, Calendar, Heart, FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface SortControlsProps {
   sortBy: string;
@@ -42,6 +43,28 @@ export function SortControls({ sortBy, sortOrder, onSortChange }: SortControlsPr
       return sortOrder === 'asc' ? 'A to Z' : 'Z to A';
     } else {
       return sortOrder === 'desc' ? 'Newest First' : 'Oldest First';
+    }
+  };
+
+  const handleSeedData = async () => {
+    try {
+      const response = await fetch('/api/images/seed', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        alert(`Success! Updated ${result.modifiedCount} images with test data. Refresh the page to see the changes.`);
+        window.location.reload();
+      } else {
+        alert('Failed to seed data');
+      }
+    } catch (error) {
+      console.error('Error seeding data:', error);
+      alert('Error seeding data');
     }
   };
 
@@ -106,6 +129,15 @@ export function SortControls({ sortBy, sortOrder, onSortChange }: SortControlsPr
             )}
           </SelectContent>
         </Select>
+
+        {/* Temporary Seed Button */}
+        <Button 
+          onClick={handleSeedData}
+          className="bg-tertiary text-accent hover:bg-primary hover:text-accent"
+          size="sm"
+        >
+          Add Test Data
+        </Button>
       </div>
     </div>
   );

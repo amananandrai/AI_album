@@ -163,6 +163,17 @@ export function ImageGallery() {
                                 </Button>
                                 <span className="text-white text-sm font-medium">{image.likes || 0}</span>
                             </div>
+                            {/* Tags and AI Model */}
+                            <div className="absolute bottom-2 left-2 flex flex-col gap-1 items-start">
+                                {image.aiModel && (
+                                    <span className="bg-tertiary text-accent text-xs font-semibold px-2 py-0.5 rounded-full shadow">{image.aiModel}</span>
+                                )}
+                                <div className="flex flex-wrap gap-1">
+                                    {image.tags && image.tags.map((tag, i) => (
+                                        <span key={i} className="bg-primary text-accent text-xs px-2 py-0.5 rounded-full shadow">{tag}</span>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                     );
                 })}
@@ -208,6 +219,17 @@ export function ImageGallery() {
                                         </svg>
                                         <span className="sr-only">Close modal</span>
                                     </button>
+                                </div>
+                                {/* AI Model and Tags in Modal */}
+                                <div className="flex flex-col gap-2 p-4">
+                                    {modalImage.aiModel && (
+                                        <span className="bg-tertiary text-accent text-xs font-semibold px-2 py-0.5 rounded-full shadow self-start">{modalImage.aiModel}</span>
+                                    )}
+                                    <div className="flex flex-wrap gap-1">
+                                        {modalImage.tags && modalImage.tags.map((tag, i) => (
+                                            <span key={i} className="bg-primary text-accent text-xs px-2 py-0.5 rounded-full shadow">{tag}</span>
+                                        ))}
+                                    </div>
                                 </div>
                                 <GalleryImage src={modalImage.uri} loading="lazy" fullscreen={true} />
                             </div>

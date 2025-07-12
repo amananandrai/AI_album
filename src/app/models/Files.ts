@@ -1,13 +1,14 @@
 import mongoose, { model, Schema } from "mongoose";
 
-
 export interface IFile {
     _id: string;
     fileName: string;
     createdAt: Date;
     likes?: number;
-    isDeleted?: boolean,
-    uri: string
+    isDeleted?: boolean;
+    uri: string;
+    tags?: string[];
+    aiModel?: string;
 }
 
 const fileSchema = new Schema<IFile>({
@@ -15,7 +16,9 @@ const fileSchema = new Schema<IFile>({
     uri: { type: String, required: true },
     createdAt: { type: Date, required: true },
     likes: { type: Number, required: false, default: 0 },
-    isDeleted: { type: Boolean, required: false, default: false }
+    isDeleted: { type: Boolean, required: false, default: false },
+    tags: { type: [String], required: false, default: [] },
+    aiModel: { type: String, required: false, default: '' }
 })
 
 export default mongoose.models.UploadedImage || mongoose.model('UploadedImage', fileSchema);

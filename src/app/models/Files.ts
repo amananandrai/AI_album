@@ -2,6 +2,7 @@ import mongoose, { model, Schema } from "mongoose";
 
 
 export interface IFile {
+    _id: string;
     fileName: string;
     createdAt: Date;
     likes?: number;

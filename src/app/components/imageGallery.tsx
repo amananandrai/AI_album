@@ -4,26 +4,32 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Image from "next/image";
 import { useContext, useEffect, useState, useRef } from "react";
 import { GalleryContext } from "../context/gallery";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { SortControls } from "./sortControls";
+import { IFile } from "../models/Files";
 
 export function ImageGallery() {
     const [page, setPage] = useState(0);
     const [sortBy, setSortBy] = useState('createdAt');
     const [sortOrder, setSortOrder] = useState('desc');
-    const { images, totalPages, fetchImages, setImages } = useContext(GalleryContext);
+    const { images, totalPages, fetchImages, setImages, likeImage } = useContext(GalleryContext);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalImage, setModalImage] = useState("");
+    const [modalImage, setModalImage] = useState<IFile | null>(null);
     const modalRef = useRef<HTMLDivElement>(null);
 
-    const toggleModal = (src: string) => {
+    const toggleModal = (image: IFile) => {
         setIsModalOpen(!isModalOpen);
-        setModalImage(src);
+        setModalImage(image);
     };
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
-        setModalImage("");
+        setModalImage(null);
+    };
+
+    const handleLike = async (e: React.MouseEvent, imageId: string) => {
+        e.stopPropagation(); // Prevent modal from opening
+        await likeImage(imageId);
     };
 
     const handleSortChange = (newSortBy: string, newSortOrder: string) => {
@@ -135,16 +141,27 @@ export function ImageGallery() {
                 onSortChange={handleSortChange}
             />
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 w-full max-w-6xl">
-                {images.map((src, index) => (
-                    <div key={index} className="group">
+                {images.map((image, index) => (
+                    <div key={index} className="group relative">
                         <Button
-                            onClick={() => toggleModal(src)}
+                            onClick={() => toggleModal(image)}
                             className="w-full h-full bg-transparent p-0 m-0 hover:scale-105 transition-transform duration-300 rounded-lg overflow-hidden shadow-lg hover:shadow-xl">
-                            <GalleryImage src={src} loading="eager" fullscreen={false} />
+                            <GalleryImage src={image.uri} loading="eager" fullscreen={false} />
                         </Button>
+                        {/* Heart Icon Overlay */}
+                        <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1">
+                            <Button
+                                onClick={(e) => handleLike(e, image._id)}
+                                className="p-1 h-auto w-auto bg-transparent hover:bg-transparent text-white hover:text-red-400 transition-colors"
+                                size="sm"
+                            >
+                                <Heart className="h-4 w-4" />
+                            </Button>
+                            <span className="text-white text-sm font-medium">{image.likes || 0}</span>
+                        </div>
                     </div>
                 ))}
-                {isModalOpen && (
+                {isModalOpen && modalImage && (
                     <div
                         id="extralarge-modal"
                         className="fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/80 backdrop-blur-sm"
@@ -152,6 +169,16 @@ export function ImageGallery() {
                         <div className="relative w-full max-w-4xl max-h-[90vh]" ref={modalRef}>
                             <div className="relative bg-white rounded-lg shadow-2xl">
                                 <div className="flex items-center justify-between p-4 border-b">
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            onClick={(e) => handleLike(e, modalImage._id)}
+                                            className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white"
+                                            size="sm"
+                                        >
+                                            <Heart className="h-4 w-4" />
+                                            <span>{modalImage.likes || 0}</span>
+                                        </Button>
+                                    </div>
                                     <button
                                         type="button"
                                         className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center transition-colors"
@@ -175,7 +202,7 @@ export function ImageGallery() {
                                         <span className="sr-only">Close modal</span>
                                     </button>
                                 </div>
-                                <GalleryImage src={modalImage} loading="lazy" fullscreen={true} />
+                                <GalleryImage src={modalImage.uri} loading="lazy" fullscreen={true} />
                             </div>
                         </div>
                     </div>

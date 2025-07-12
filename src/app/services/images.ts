@@ -38,11 +38,8 @@ export async function getImages(limit: number | null, offset: number | null, sor
         }
         const images = await imagesQuery;
 
-        // Map the images to their URI
-        const imageUris = images.map((image: IFile) => image.uri);
-
-        // Prepare the response
-        const resp: ImageResponse = { rows: imageUris, total };
+        // Return full image objects instead of just URIs
+        const resp: ImageResponse = { rows: images, total };
         return resp;
     } catch (e) {
         throw e;

@@ -1,4 +1,5 @@
 import { NextApiRequest } from "next";
+import { IFile } from "../models/Files";
 
 export interface ExtendedNextApiRequest extends NextApiRequest {
     query: {
@@ -10,6 +11,6 @@ export interface ExtendedNextApiRequest extends NextApiRequest {
 }
 
 export type ImageResponse = {
-    rows: string[],
+    rows: IFile[],
     total: number
 }

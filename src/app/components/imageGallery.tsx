@@ -16,6 +16,22 @@ export function ImageGallery() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalImage, setModalImage] = useState<IFile | null>(null);
     const modalRef = useRef<HTMLDivElement>(null);
+    const [selectedModel, setSelectedModel] = useState<string>('');
+    const [selectedTag, setSelectedTag] = useState<string>('');
+
+    // Debug logging
+    useEffect(() => {
+        console.log('Images loaded:', images);
+        images.forEach((img, index) => {
+            console.log(`Image ${index}:`, {
+                _id: img._id,
+                fileName: img.fileName,
+                tags: img.tags,
+                aiModel: img.aiModel,
+                likes: img.likes
+            });
+        });
+    }, [images]);
 
     const toggleModal = (image: IFile) => {
         setIsModalOpen(!isModalOpen);
@@ -77,6 +93,17 @@ export function ImageGallery() {
     if (images.length === 0) {
         return <div>Loading...</div>
     }
+
+    // Get unique models and tags for filter options
+    const allModels = Array.from(new Set(images.map(img => img.aiModel).filter(Boolean)));
+    const allTags = Array.from(new Set(images.flatMap(img => img.tags || []).filter(Boolean)));
+
+    // Filter images based on selected model and tag
+    const filteredImages = images.filter(image => {
+        const matchesModel = !selectedModel || image.aiModel === selectedModel;
+        const matchesTag = !selectedTag || (image.tags && image.tags.includes(selectedTag));
+        return matchesModel && matchesTag;
+    });
 
     const renderPageNumbers = () => {
         const pageNumbers = [];
@@ -140,8 +167,56 @@ export function ImageGallery() {
                 sortOrder={sortOrder}
                 onSortChange={handleSortChange}
             />
+            
+            {/* Filter Controls */}
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6 p-4 bg-secondary text-accent rounded-lg shadow-sm border border-primary w-full max-w-6xl">
+                <div className="flex items-center gap-2">
+                    <span className="font-medium text-accent">Filter by:</span>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                    {/* AI Model Filter */}
+                    <select
+                        value={selectedModel}
+                        onChange={(e) => setSelectedModel(e.target.value)}
+                        className="px-3 py-2 bg-secondary text-accent border border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-tertiary"
+                    >
+                        <option value="">All Models</option>
+                        {allModels.map((model) => (
+                            <option key={model} value={model}>{model}</option>
+                        ))}
+                    </select>
+
+                    {/* Tag Filter */}
+                    <select
+                        value={selectedTag}
+                        onChange={(e) => setSelectedTag(e.target.value)}
+                        className="px-3 py-2 bg-secondary text-accent border border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-tertiary"
+                    >
+                        <option value="">All Tags</option>
+                        {allTags.map((tag) => (
+                            <option key={tag} value={tag}>{tag}</option>
+                        ))}
+                    </select>
+
+                    {/* Clear Filters */}
+                    {(selectedModel || selectedTag) && (
+                        <Button
+                            onClick={() => {
+                                setSelectedModel('');
+                                setSelectedTag('');
+                            }}
+                            className="bg-tertiary text-accent hover:bg-primary"
+                            size="sm"
+                        >
+                            Clear Filters
+                        </Button>
+                    )}
+                </div>
+            </div>
+
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 w-full max-w-6xl">
-                {images.map((image, index) => {
+                {filteredImages.map((image, index) => {
                     const liked = hasLiked(image._id);
                     return (
                         <div key={index} className="group relative">
@@ -166,11 +241,11 @@ export function ImageGallery() {
                             {/* Tags and AI Model */}
                             <div className="absolute bottom-2 left-2 flex flex-col gap-1 items-start">
                                 {image.aiModel && (
-                                    <span className="bg-tertiary text-accent text-xs font-semibold px-2 py-0.5 rounded-full shadow">{image.aiModel}</span>
+                                    <span className="bg-tertiary text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow">{image.aiModel}</span>
                                 )}
                                 <div className="flex flex-wrap gap-1">
                                     {image.tags && image.tags.map((tag, i) => (
-                                        <span key={i} className="bg-primary text-accent text-xs px-2 py-0.5 rounded-full shadow">{tag}</span>
+                                        <span key={i} className="bg-primary text-white text-xs px-2 py-0.5 rounded-full shadow">{tag}</span>
                                     ))}
                                 </div>
                             </div>
@@ -223,11 +298,11 @@ export function ImageGallery() {
                                 {/* AI Model and Tags in Modal */}
                                 <div className="flex flex-col gap-2 p-4">
                                     {modalImage.aiModel && (
-                                        <span className="bg-tertiary text-accent text-xs font-semibold px-2 py-0.5 rounded-full shadow self-start">{modalImage.aiModel}</span>
+                                        <span className="bg-tertiary text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow self-start">{modalImage.aiModel}</span>
                                     )}
                                     <div className="flex flex-wrap gap-1">
                                         {modalImage.tags && modalImage.tags.map((tag, i) => (
-                                            <span key={i} className="bg-primary text-accent text-xs px-2 py-0.5 rounded-full shadow">{tag}</span>
+                                            <span key={i} className="bg-primary text-white text-xs px-2 py-0.5 rounded-full shadow">{tag}</span>
                                         ))}
                                     </div>
                                 </div>

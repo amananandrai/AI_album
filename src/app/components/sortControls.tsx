@@ -46,28 +46,6 @@ export function SortControls({ sortBy, sortOrder, onSortChange }: SortControlsPr
     }
   };
 
-  const handleSeedData = async () => {
-    try {
-      const response = await fetch('/api/images/seed', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      if (response.ok) {
-        const result = await response.json();
-        alert(`Success! Updated ${result.modifiedCount} images with test data. Refresh the page to see the changes.`);
-        window.location.reload();
-      } else {
-        alert('Failed to seed data');
-      }
-    } catch (error) {
-      console.error('Error seeding data:', error);
-      alert('Error seeding data');
-    }
-  };
-
   return (
     <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6 p-4 bg-secondary text-accent rounded-lg shadow-sm border border-primary">
       <div className="flex items-center gap-2 text-gray-700">
@@ -129,15 +107,6 @@ export function SortControls({ sortBy, sortOrder, onSortChange }: SortControlsPr
             )}
           </SelectContent>
         </Select>
-
-        {/* Temporary Seed Button */}
-        <Button 
-          onClick={handleSeedData}
-          className="bg-tertiary text-accent hover:bg-primary hover:text-accent"
-          size="sm"
-        >
-          Add Test Data
-        </Button>
       </div>
     </div>
   );

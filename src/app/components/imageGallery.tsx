@@ -259,6 +259,10 @@ export function ImageGallery() {
                     >
                         <div className="relative w-full max-w-4xl max-h-[90vh]" ref={modalRef}>
                             <div className="relative bg-white rounded-lg shadow-2xl">
+                                {/* Modal Title: Image Name */}
+                                <div className="flex flex-col items-center justify-center p-4 border-b">
+                                    <h2 className="text-lg font-bold text-primary text-center w-full truncate" title={modalImage.fileName}>{modalImage.fileName}</h2>
+                                </div>
                                 <div className="flex items-center justify-between p-4 border-b">
                                     <div className="flex items-center gap-2">
                                         <Button

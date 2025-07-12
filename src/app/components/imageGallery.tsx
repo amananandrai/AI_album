@@ -12,7 +12,7 @@ export function ImageGallery() {
     const [page, setPage] = useState(0);
     const [sortBy, setSortBy] = useState('createdAt');
     const [sortOrder, setSortOrder] = useState('desc');
-    const { images, totalPages, fetchImages, setImages, likeImage } = useContext(GalleryContext);
+    const { images, totalPages, fetchImages, setImages, likeImage, hasLiked } = useContext(GalleryContext);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalImage, setModalImage] = useState<IFile | null>(null);
     const modalRef = useRef<HTMLDivElement>(null);
@@ -141,26 +141,31 @@ export function ImageGallery() {
                 onSortChange={handleSortChange}
             />
             <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 w-full max-w-6xl">
-                {images.map((image, index) => (
-                    <div key={index} className="group relative">
-                        <Button
-                            onClick={() => toggleModal(image)}
-                            className="w-full h-full bg-transparent p-0 m-0 hover:scale-105 transition-transform duration-300 rounded-lg overflow-hidden shadow-lg hover:shadow-xl">
-                            <GalleryImage src={image.uri} loading="eager" fullscreen={false} />
-                        </Button>
-                        {/* Heart Icon Overlay */}
-                        <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1">
+                {images.map((image, index) => {
+                    const liked = hasLiked(image._id);
+                    return (
+                        <div key={index} className="group relative">
                             <Button
-                                onClick={(e) => handleLike(e, image._id)}
-                                className="p-1 h-auto w-auto bg-transparent hover:bg-transparent text-white hover:text-red-400 transition-colors"
-                                size="sm"
-                            >
-                                <Heart className="h-4 w-4" />
+                                onClick={() => toggleModal(image)}
+                                className="w-full h-full bg-transparent p-0 m-0 hover:scale-105 transition-transform duration-300 rounded-lg overflow-hidden shadow-lg hover:shadow-xl">
+                                <GalleryImage src={image.uri} loading="eager" fullscreen={false} />
                             </Button>
-                            <span className="text-white text-sm font-medium">{image.likes || 0}</span>
+                            {/* Heart Icon Overlay */}
+                            <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1">
+                                <Button
+                                    onClick={(e) => handleLike(e, image._id)}
+                                    className="p-1 h-auto w-auto bg-transparent hover:bg-transparent"
+                                    size="sm"
+                                    disabled={liked}
+                                    aria-label={liked ? 'Liked' : 'Like'}
+                                >
+                                    <Heart className="h-4 w-4" style={{ color: liked ? 'red' : (image.likes ? 'rgba(255,255,255,0.8)' : 'transparent'), fill: liked ? 'red' : 'none', stroke: liked ? 'red' : 'white' }} />
+                                </Button>
+                                <span className="text-white text-sm font-medium">{image.likes || 0}</span>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
                 {isModalOpen && modalImage && (
                     <div
                         id="extralarge-modal"
@@ -174,8 +179,10 @@ export function ImageGallery() {
                                             onClick={(e) => handleLike(e, modalImage._id)}
                                             className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white"
                                             size="sm"
+                                            disabled={hasLiked(modalImage._id)}
+                                            aria-label={hasLiked(modalImage._id) ? 'Liked' : 'Like'}
                                         >
-                                            <Heart className="h-4 w-4" />
+                                            <Heart className="h-4 w-4" style={{ color: hasLiked(modalImage._id) ? 'white' : (modalImage.likes ? 'rgba(255,255,255,0.8)' : 'transparent'), fill: hasLiked(modalImage._id) ? 'white' : 'none', stroke: hasLiked(modalImage._id) ? 'white' : 'red' }} />
                                             <span>{modalImage.likes || 0}</span>
                                         </Button>
                                     </div>

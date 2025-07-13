@@ -91,28 +91,7 @@ export function ImageGallery() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isModalOpen]);
 
-    // Download all images as ZIP
-    const handleDownloadAll = async () => {
-        const images = document.querySelectorAll<HTMLImageElement>('#gallery img');
-        if (!images.length) {
-            alert('No images found to download.');
-            return;
-        }
-
-        const imgArray = Array.from(images);
-        for (const img of imgArray) {
-            try {
-                const response = await fetch(img.src);
-                const blob = await response.blob();
-                const urlParts = img.src.split('/');
-                let filename = urlParts[urlParts.length - 1].split('?')[0];
-                if (!filename) filename = 'image.jpg';
-                saveAs(blob, filename);
-            } catch (err) {
-                console.error('Failed to download:', img.src, err);
-            }
-        }
-    };
+ 
 
     if (images.length === 0) {
         return <div>Loading...</div>
@@ -186,11 +165,6 @@ export function ImageGallery() {
 
     return (
         <>
-            <div className="flex justify-end mb-4">
-                <Button onClick={handleDownloadAll} className="bg-primary text-white font-bold px-4 py-2 rounded hover:bg-tertiary transition-colors">
-                    Download All
-                </Button>
-            </div>
             <SortControls 
                 sortBy={sortBy}
                 sortOrder={sortOrder}
@@ -244,7 +218,7 @@ export function ImageGallery() {
                 </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 w-full max-w-6xl" id="gallery">
+            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 w-full max-w-6xl">
                 {filteredImages.map((image, index) => {
                     const liked = hasLiked(image._id);
                     return (

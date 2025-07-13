@@ -93,19 +93,17 @@ export function ImageGallery() {
 
     // Download all images as ZIP
     const handleDownloadAll = async () => {
-        // Select all images in the gallery (adjust selector if needed)
         const images = document.querySelectorAll<HTMLImageElement>('#gallery img');
         if (!images.length) {
             alert('No images found to download.');
             return;
         }
 
-        for (const img of images) {
+        const imgArray = Array.from(images);
+        for (const img of imgArray) {
             try {
-                // Fetch the image as a blob
                 const response = await fetch(img.src);
                 const blob = await response.blob();
-                // Use the image's filename or fallback to a default
                 const urlParts = img.src.split('/');
                 let filename = urlParts[urlParts.length - 1].split('?')[0];
                 if (!filename) filename = 'image.jpg';

@@ -7,7 +7,6 @@ import { GalleryContext } from "../context/gallery";
 import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { SortControls } from "./sortControls";
 import { IFile } from "../models/Files";
-import { saveAs } from 'file-saver';
 
 export function ImageGallery() {
     const [page, setPage] = useState(0);
@@ -19,20 +18,6 @@ export function ImageGallery() {
     const modalRef = useRef<HTMLDivElement>(null);
     const [selectedModel, setSelectedModel] = useState<string>('');
     const [selectedTag, setSelectedTag] = useState<string>('');
-
-    // Debug logging
-    useEffect(() => {
-        console.log('Images loaded:', images);
-        images.forEach((img, index) => {
-            console.log(`Image ${index}:`, {
-                _id: img._id,
-                fileName: img.fileName,
-                tags: img.tags,
-                aiModel: img.aiModel,
-                likes: img.likes
-            });
-        });
-    }, [images]);
 
     const toggleModal = (image: IFile) => {
         setIsModalOpen(!isModalOpen);

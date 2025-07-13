@@ -3,6 +3,23 @@ import { ImageResponse } from "@/app/types/ExtendNextApiReqeuest";
 import { NextRequest } from "next/server";
 import mongoose, { Schema } from 'mongoose';
 import UploadedImage from '@/app/models/Files';
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { v4 as uuidv4 } from "uuid";
+
+const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID!;
+const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY!;
+const R2_BUCKET = process.env.R2_BUCKET!;
+const R2_ACCOUNT_ID = process.env.R2_ACCOUNT_ID!;
+const R2_PUBLIC_URL = process.env.R2_PUBLIC_URL!;
+
+const s3 = new S3Client({
+  region: "auto",
+  endpoint: `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  credentials: {
+    accessKeyId: R2_ACCESS_KEY_ID,
+    secretAccessKey: R2_SECRET_ACCESS_KEY,
+  },
+});
 
 export async function GET(request: NextRequest) {
     try {
@@ -26,7 +43,6 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-    // Parse multipart form data
     const formData = await request.formData();
     const file = formData.get('file');
     const title = formData.get('title') as string;
@@ -39,11 +55,23 @@ export async function POST(request: NextRequest) {
         return Response.json({ error: 'No file uploaded' }, { status: 400 });
     }
 
-    // For now, just save the file as a base64 string (replace with Imgur upload logic as needed)
+    // Prepare file for upload
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    // TODO: Replace this with Imgur upload and get the URL
-    const uri = `data:${file.type};base64,${buffer.toString('base64')}`;
+    const ext = file.name.split('.').pop() || 'jpg';
+    const key = `uploads/${uuidv4()}.${ext}`;
+
+    // Upload to R2
+    await s3.send(new PutObjectCommand({
+        Bucket: R2_BUCKET,
+        Key: key,
+        Body: buffer,
+        ContentType: file.type,
+        ACL: "public-read", // R2 ignores this, but S3 SDK requires it
+    }));
+
+    // Construct public URL
+    const uri = `${R2_PUBLIC_URL}/${key}`;
 
     // Save to MongoDB
     const doc = await UploadedImage.create({

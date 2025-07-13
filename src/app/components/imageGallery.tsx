@@ -7,6 +7,7 @@ import { GalleryContext } from "../context/gallery";
 import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { SortControls } from "./sortControls";
 import { IFile } from "../models/Files";
+import { saveAs } from 'file-saver';
 
 export function ImageGallery() {
     const [page, setPage] = useState(0);
@@ -90,6 +91,17 @@ export function ImageGallery() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isModalOpen]);
 
+    // Download all images as ZIP
+    const handleDownloadAll = async () => {
+        const res = await fetch('/api/images/download-all');
+        if (!res.ok) {
+            alert('Failed to download images.');
+            return;
+        }
+        const blob = await res.blob();
+        saveAs(blob, 'all_images.zip');
+    };
+
     if (images.length === 0) {
         return <div>Loading...</div>
     }
@@ -161,7 +173,12 @@ export function ImageGallery() {
     };
 
     return (
-        <div className="flex justify-center items-center flex-col space-y-8">
+        <>
+            <div className="flex justify-end mb-4">
+                <Button onClick={handleDownloadAll} className="bg-primary text-white font-bold px-4 py-2 rounded hover:bg-tertiary transition-colors">
+                    Download All
+                </Button>
+            </div>
             <SortControls 
                 sortBy={sortBy}
                 sortOrder={sortOrder}
@@ -357,7 +374,7 @@ export function ImageGallery() {
                     </Button>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 

@@ -183,18 +183,6 @@ export function ImageGallery() {
     return (
         <>
             {/* Upload Form */}
-            <form className="mb-6 p-4 bg-secondary rounded-lg shadow flex flex-col gap-4 max-w-xl mx-auto" onSubmit={handleUpload} encType="multipart/form-data">
-                <h2 className="text-lg font-bold text-primary">Upload Image</h2>
-                <input type="file" name="file" accept="image/*" required className="border p-2 rounded" />
-                <input type="text" name="title" placeholder="Title" className="border p-2 rounded" />
-                <input type="text" name="tags" placeholder="Tags (comma separated)" className="border p-2 rounded" />
-                <input type="text" name="aiModel" placeholder="AI Model" className="border p-2 rounded" />
-                <input type="text" name="prompt" placeholder="Prompt" className="border p-2 rounded" />
-                <textarea name="description" placeholder="Description" className="border p-2 rounded" />
-                <Button type="submit" disabled={uploading}>{uploading ? 'Uploading...' : 'Upload'}</Button>
-                {uploadError && <div className="text-red-500">{uploadError}</div>}
-                {uploadSuccess && <div className="text-green-600">{uploadSuccess}</div>}
-            </form>
             <SortControls 
                 sortBy={sortBy}
                 sortOrder={sortOrder}

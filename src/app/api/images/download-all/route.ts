@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
   }
 
   const images = await UploadedImage.find({ isDeleted: false });
+  console.log('Found images:', images.length);
 
   // Create a streamable response
   const stream = new PassThrough();
@@ -45,12 +46,13 @@ export async function GET(request: NextRequest) {
   // Download and append each image to the archive
   for (const img of images) {
     try {
+      console.log('Downloading:', img.uri);
       const response = await axios.get(img.uri, { responseType: 'arraybuffer' });
       const ext = img.uri.split('.').pop().split('?')[0] || 'jpg';
       const filename = `${img.fileName || img._id}.${ext}`;
       archive.append(Buffer.from(response.data), { name: filename });
-    } catch (err) {
-      // Skip failed downloads
+    } catch (err: any) {
+      console.error('Failed to download:', img.uri, err.message);
       continue;
     }
   }

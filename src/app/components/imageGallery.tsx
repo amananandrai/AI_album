@@ -93,13 +93,27 @@ export function ImageGallery() {
 
     // Download all images as ZIP
     const handleDownloadAll = async () => {
-        const res = await fetch('/api/images/download-all');
-        if (!res.ok) {
-            alert('Failed to download images.');
+        // Select all images in the gallery (adjust selector if needed)
+        const images = document.querySelectorAll<HTMLImageElement>('#gallery img');
+        if (!images.length) {
+            alert('No images found to download.');
             return;
         }
-        const blob = await res.blob();
-        saveAs(blob, 'all_images.zip');
+
+        for (const img of images) {
+            try {
+                // Fetch the image as a blob
+                const response = await fetch(img.src);
+                const blob = await response.blob();
+                // Use the image's filename or fallback to a default
+                const urlParts = img.src.split('/');
+                let filename = urlParts[urlParts.length - 1].split('?')[0];
+                if (!filename) filename = 'image.jpg';
+                saveAs(blob, filename);
+            } catch (err) {
+                console.error('Failed to download:', img.src, err);
+            }
+        }
     };
 
     if (images.length === 0) {
@@ -232,7 +246,7 @@ export function ImageGallery() {
                 </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 w-full max-w-6xl">
+            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 w-full max-w-6xl" id="gallery">
                 {filteredImages.map((image, index) => {
                     const liked = hasLiked(image._id);
                     return (

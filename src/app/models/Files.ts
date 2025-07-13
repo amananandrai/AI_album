@@ -3,6 +3,9 @@ import mongoose, { model, Schema } from "mongoose";
 export interface IFile {
     _id: string;
     fileName: string;
+    title?: string;
+    prompt?: string;
+    description?: string;
     createdAt: Date;
     likes?: number;
     isDeleted?: boolean;
@@ -13,6 +16,9 @@ export interface IFile {
 
 const fileSchema = new Schema<IFile>({
     fileName: { type: String, required: true },
+    title: { type: String, required: false, default: '' },
+    prompt: { type: String, required: false, default: '' },
+    description: { type: String, required: false, default: '' },
     uri: { type: String, required: true },
     createdAt: { type: Date, required: true },
     likes: { type: Number, required: false, default: 0 },

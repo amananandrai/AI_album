@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import Image from "next/image";
-import { useContext, useEffect, useState, useRef } from "react";
+import { useContext, useEffect, useState, useRef, FormEvent } from "react";
 import { GalleryContext } from "../context/gallery";
 import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
 import { SortControls } from "./sortControls";
@@ -18,6 +18,11 @@ export function ImageGallery() {
     const modalRef = useRef<HTMLDivElement>(null);
     const [selectedModel, setSelectedModel] = useState<string>('');
     const [selectedTag, setSelectedTag] = useState<string>('');
+
+    // Upload form state
+    const [uploading, setUploading] = useState(false);
+    const [uploadError, setUploadError] = useState<string | null>(null);
+    const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
 
     const toggleModal = (image: IFile) => {
         setIsModalOpen(!isModalOpen);
@@ -49,6 +54,33 @@ export function ImageGallery() {
     const handleClickOutside = (event: MouseEvent) => {
         if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
             handleCloseModal();
+        }
+    };
+
+    const handleUpload = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setUploading(true);
+        setUploadError(null);
+        setUploadSuccess(null);
+        const form = e.currentTarget;
+        const formData = new FormData(form);
+        try {
+            const res = await fetch('/api/images', {
+                method: 'POST',
+                body: formData,
+            });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Upload failed');
+            setUploadSuccess('Image uploaded successfully!');
+            setPage(0); // Reset to first page
+            fetchImages(0, sortBy, sortOrder).then((data) => {
+                setImages(data.rows);
+            });
+            form.reset();
+        } catch (err: any) {
+            setUploadError(err.message);
+        } finally {
+            setUploading(false);
         }
     };
 
@@ -150,6 +182,19 @@ export function ImageGallery() {
 
     return (
         <>
+            {/* Upload Form */}
+            <form className="mb-6 p-4 bg-secondary rounded-lg shadow flex flex-col gap-4 max-w-xl mx-auto" onSubmit={handleUpload} encType="multipart/form-data">
+                <h2 className="text-lg font-bold text-primary">Upload Image</h2>
+                <input type="file" name="file" accept="image/*" required className="border p-2 rounded" />
+                <input type="text" name="title" placeholder="Title" className="border p-2 rounded" />
+                <input type="text" name="tags" placeholder="Tags (comma separated)" className="border p-2 rounded" />
+                <input type="text" name="aiModel" placeholder="AI Model" className="border p-2 rounded" />
+                <input type="text" name="prompt" placeholder="Prompt" className="border p-2 rounded" />
+                <textarea name="description" placeholder="Description" className="border p-2 rounded" />
+                <Button type="submit" disabled={uploading}>{uploading ? 'Uploading...' : 'Upload'}</Button>
+                {uploadError && <div className="text-red-500">{uploadError}</div>}
+                {uploadSuccess && <div className="text-green-600">{uploadSuccess}</div>}
+            </form>
             <SortControls 
                 sortBy={sortBy}
                 sortOrder={sortOrder}

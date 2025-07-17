@@ -51,6 +51,8 @@ export default function UploadPage() {
         <main className="min-h-screen bg-accent text-primary py-8 flex flex-col items-center">
             <form className="mt-8 mb-6 p-4 bg-secondary rounded-lg shadow flex flex-col gap-4 max-w-xl w-full" onSubmit={handleUpload} encType="multipart/form-data">
                 <h2 className="text-lg font-bold text-primary">Upload Image</h2>
+                <input type="text" name="username" placeholder="Username" required className="border p-2 rounded" />
+                <input type="password" name="password" placeholder="Password" required className="border p-2 rounded" />
                 <input type="file" name="file" accept="image/*" required className="border p-2 rounded" />
                 <input type="text" name="title" placeholder="Title" className="border p-2 rounded" />
                 <input type="text" name="tags" placeholder="Tags (comma separated)" className="border p-2 rounded" />

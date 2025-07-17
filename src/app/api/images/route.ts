@@ -45,11 +45,17 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-    const session = await getServerSession(authOptions);
-    if (!session) {
+    const formData = await request.formData();
+    const username = formData.get('username');
+    const password = formData.get('password');
+
+    if (
+        username !== process.env.USERNAME ||
+        password !== process.env.PASSWORD
+    ) {
         return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const formData = await request.formData();
+
     const file = formData.get('file');
     const title = formData.get('title') as string;
     const tags = formData.get('tags') ? (formData.get('tags') as string).split(',').map(t => t.trim()) : [];

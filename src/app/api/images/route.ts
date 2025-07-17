@@ -5,8 +5,6 @@ import mongoose, { Schema } from 'mongoose';
 import UploadedImage from '@/app/models/Files';
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from "uuid";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../auth/authOptions";
 
 const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID!;
 const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY!;

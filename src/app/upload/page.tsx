@@ -2,10 +2,8 @@
 
 import React, { useState, FormEvent } from 'react';
 import { Button } from "@/components/ui/button";
-import { useSession, signIn, signOut } from "next-auth/react";
 
 export default function UploadPage() {
-    const { data: session, status } = useSession();
     const [uploading, setUploading] = useState(false);
     const [uploadError, setUploadError] = useState<string | null>(null);
     const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
@@ -32,20 +30,6 @@ export default function UploadPage() {
             setUploading(false);
         }
     };
-
-    if (status === "loading") {
-        return <div>Loading...</div>;
-    }
-    if (!session) {
-        return (
-            <main className="min-h-screen bg-accent text-primary py-8 flex flex-col items-center">
-                <div className="mt-8 mb-6 p-4 bg-secondary rounded-lg shadow flex flex-col gap-4 max-w-xl w-full text-center">
-                    <h2 className="text-lg font-bold text-primary">Sign in to upload images</h2>
-                    <Button onClick={() => signIn()}>Sign In</Button>
-                </div>
-            </main>
-        );
-    }
 
     return (
         <main className="min-h-screen bg-accent text-primary py-8 flex flex-col items-center">

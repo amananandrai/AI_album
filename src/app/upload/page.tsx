@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Upload, User, Lock, Image, Tag, FileText, Sparkles, LogOut, CheckCircle, AlertCircle, X, Plus } from 'lucide-react';
 
 export default function UploadPage() {
@@ -151,14 +150,14 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-accent via-accent/95 to-accent/90 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-accent py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-full mb-6 shadow-lg">
             <Upload className="h-8 w-8 text-accent" />
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-primary mb-4 bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+          <h1 className="text-4xl sm:text-5xl font-bold text-primary mb-4">
             AI Gallery Upload
           </h1>
           <p className="text-xl text-primary/80 max-w-2xl mx-auto">
@@ -168,7 +167,7 @@ export default function UploadPage() {
 
         {/* Login Section */}
         {!loggedIn && (
-          <Card className="w-full shadow-2xl border-primary/20 bg-secondary/50 backdrop-blur-sm">
+          <Card className="w-full shadow-2xl border-primary/20 bg-secondary/50">
             <CardHeader className="text-center pb-8">
               <div className="mx-auto w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-6 shadow-lg">
                 <User className="h-8 w-8 text-accent" />
@@ -221,7 +220,7 @@ export default function UploadPage() {
                 </Button>
 
                 {loginError && (
-                  <Alert className="border-red-500/50 bg-red-50/50 backdrop-blur-sm">
+                  <Alert className="border-red-500/50 bg-red-50/50">
                     <AlertCircle className="h-5 w-5 text-red-500" />
                     <AlertDescription className="text-red-700 font-medium">
                       {loginError}
@@ -237,7 +236,7 @@ export default function UploadPage() {
         {loggedIn && (
           <div className="space-y-8">
             {/* Success Message */}
-            <Alert className="border-green-500/50 bg-green-50/50 backdrop-blur-sm">
+            <Alert className="border-green-500/50 bg-green-50/50">
               <CheckCircle className="h-5 w-5 text-green-500" />
               <AlertDescription className="text-green-700 font-medium">
                 Successfully logged in! You can now upload your AI-generated images.
@@ -260,7 +259,7 @@ export default function UploadPage() {
             </div>
 
             {/* Upload Form */}
-            <Card className="w-full shadow-2xl border-primary/20 bg-secondary/50 backdrop-blur-sm">
+            <Card className="w-full shadow-2xl border-primary/20 bg-secondary/50">
               <CardHeader className="pb-8">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center shadow-lg">
@@ -297,7 +296,7 @@ export default function UploadPage() {
                     </p>
                   </div>
 
-                  <Separator className="bg-primary/20" />
+                  <div className="border-t border-primary/20"></div>
 
                   {/* Title */}
                   <div className="space-y-3">
@@ -331,7 +330,7 @@ export default function UploadPage() {
                     />
                   </div>
 
-                  <Separator className="bg-primary/20" />
+                  <div className="border-t border-primary/20"></div>
 
                   {/* Tags */}
                   <div className="space-y-4">
@@ -360,10 +359,9 @@ export default function UploadPage() {
                       {tags.length > 0 && (
                         <div className="flex flex-wrap gap-2">
                           {tags.map((tag, index) => (
-                            <Badge
+                            <span
                               key={index}
-                              variant="secondary"
-                              className="bg-tertiary text-white hover:bg-tertiary/90 px-3 py-2 text-sm font-medium flex items-center gap-2"
+                              className="bg-tertiary text-white hover:bg-tertiary/90 px-3 py-2 text-sm font-medium flex items-center gap-2 rounded-full"
                             >
                               {tag}
                               <button
@@ -373,7 +371,7 @@ export default function UploadPage() {
                               >
                                 <X className="h-3 w-3" />
                               </button>
-                            </Badge>
+                            </span>
                           ))}
                         </div>
                       )}
@@ -383,7 +381,7 @@ export default function UploadPage() {
                     </div>
                   </div>
 
-                  <Separator className="bg-primary/20" />
+                  <div className="border-t border-primary/20"></div>
 
                   {/* Prompts */}
                   <div className="space-y-3">
@@ -424,7 +422,7 @@ export default function UploadPage() {
 
                   {/* Error/Success Messages */}
                   {uploadError && (
-                    <Alert className="border-red-500/50 bg-red-50/50 backdrop-blur-sm">
+                    <Alert className="border-red-500/50 bg-red-50/50">
                       <AlertCircle className="h-5 w-5 text-red-500" />
                       <AlertDescription className="text-red-700 font-medium">
                         {uploadError}
@@ -433,7 +431,7 @@ export default function UploadPage() {
                   )}
 
                   {uploadSuccess && (
-                    <Alert className="border-green-500/50 bg-green-50/50 backdrop-blur-sm">
+                    <Alert className="border-green-500/50 bg-green-50/50">
                       <CheckCircle className="h-5 w-5 text-green-500" />
                       <AlertDescription className="text-green-700 font-medium">
                         {uploadSuccess}

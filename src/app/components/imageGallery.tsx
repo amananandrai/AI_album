@@ -2,9 +2,6 @@
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Image from "next/image";
 import { useContext, useEffect, useState, useRef, FormEvent } from "react";
@@ -12,7 +9,6 @@ import { GalleryContext } from "../context/gallery";
 import { ChevronLeft, ChevronRight, Heart, Filter, X, Image as ImageIcon, Sparkles, Tag, Eye } from "lucide-react";
 import { SortControls } from "./sortControls";
 import { IFile } from "../models/Files";
-import { Label } from "@/components/ui/label";
 
 export function ImageGallery() {
     const [page, setPage] = useState(0);
@@ -119,7 +115,7 @@ export function ImageGallery() {
     if (images.length === 0) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
-                <Card className="w-full max-w-md bg-secondary/50 backdrop-blur-sm border-primary/20">
+                <Card className="w-full max-w-md bg-secondary/50 border-primary/20">
                     <CardContent className="flex flex-col items-center justify-center py-12">
                         <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4">
                             <ImageIcon className="h-8 w-8 text-primary/60" />
@@ -208,7 +204,7 @@ export function ImageGallery() {
             />
             
             {/* Filter Controls */}
-            <Card className="w-full max-w-6xl bg-secondary/50 backdrop-blur-sm border-primary/20 shadow-xl">
+            <Card className="w-full max-w-6xl bg-secondary/50 border-primary/20 shadow-xl">
                 <CardHeader className="pb-4">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-md">
@@ -231,34 +227,32 @@ export function ImageGallery() {
                         <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
                             {/* AI Model Filter */}
                             <div className="space-y-2">
-                                <Label className="text-sm font-medium text-primary/80">AI Model</Label>
-                                <Select value={selectedModel} onValueChange={setSelectedModel}>
-                                    <SelectTrigger className="w-full sm:w-48 bg-secondary/80 border-primary/30 text-accent focus:border-tertiary focus:ring-2 focus:ring-tertiary/20">
-                                        <SelectValue placeholder="All Models" />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-secondary border-primary/30">
-                                        <SelectItem value="all">All Models</SelectItem>
-                                        {allModels.map((model) => (
-                                            <SelectItem key={model} value={model}>{model}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <label className="text-sm font-medium text-primary/80">AI Model</label>
+                                <select
+                                    value={selectedModel}
+                                    onChange={(e) => setSelectedModel(e.target.value)}
+                                    className="w-full sm:w-48 px-4 py-3 bg-secondary/80 border border-primary/30 text-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary focus:border-tertiary"
+                                >
+                                    <option value="all">All Models</option>
+                                    {allModels.map((model) => (
+                                        <option key={model} value={model}>{model}</option>
+                                    ))}
+                                </select>
                             </div>
 
                             {/* Tag Filter */}
                             <div className="space-y-2">
-                                <Label className="text-sm font-medium text-primary/80">Tag</Label>
-                                <Select value={selectedTag} onValueChange={setSelectedTag}>
-                                    <SelectTrigger className="w-full sm:w-48 bg-secondary/80 border-primary/30 text-accent focus:border-tertiary focus:ring-2 focus:ring-tertiary/20">
-                                        <SelectValue placeholder="All Tags" />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-secondary border-primary/30">
-                                        <SelectItem value="all">All Tags</SelectItem>
-                                        {allTags.map((tag) => (
-                                            <SelectItem key={tag} value={tag}>{tag}</SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <label className="text-sm font-medium text-primary/80">Tag</label>
+                                <select
+                                    value={selectedTag}
+                                    onChange={(e) => setSelectedTag(e.target.value)}
+                                    className="w-full sm:w-48 px-4 py-3 bg-secondary/80 border border-primary/30 text-accent rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary focus:border-tertiary"
+                                >
+                                    <option value="all">All Tags</option>
+                                    {allTags.map((tag) => (
+                                        <option key={tag} value={tag}>{tag}</option>
+                                    ))}
+                                </select>
                             </div>
 
                             {/* Clear Filters */}
@@ -285,9 +279,9 @@ export function ImageGallery() {
                             Showing {filteredImages.length} of {images.length} images
                         </p>
                         {(selectedModel !== 'all' || selectedTag !== 'all') && (
-                            <Badge variant="secondary" className="bg-tertiary text-white">
+                            <span className="bg-tertiary text-white px-3 py-1 rounded-full text-sm font-medium">
                                 Filtered
-                            </Badge>
+                            </span>
                         )}
                     </div>
                 </CardContent>
@@ -298,7 +292,7 @@ export function ImageGallery() {
                 {filteredImages.map((image, index) => {
                     const liked = hasLiked(image._id);
                     return (
-                        <Card key={index} className="group relative overflow-hidden bg-secondary/30 backdrop-blur-sm border-primary/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                        <Card key={index} className="group relative overflow-hidden bg-secondary/30 border-primary/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
                             <CardContent className="p-0">
                                 <Button
                                     onClick={() => toggleModal(image)}
@@ -314,7 +308,7 @@ export function ImageGallery() {
                                 </Button>
                                 
                                 {/* Heart Icon Overlay */}
-                                <div className="absolute top-3 right-3 flex items-center gap-2 bg-black/60 backdrop-blur-sm rounded-full px-3 py-2">
+                                <div className="absolute top-3 right-3 flex items-center gap-2 bg-black/60 rounded-full px-3 py-2">
                                     <Button
                                         onClick={(e) => handleLike(e, image._id)}
                                         className="p-1 h-auto w-auto bg-transparent hover:bg-transparent"
@@ -330,17 +324,17 @@ export function ImageGallery() {
                                 {/* Tags and AI Model */}
                                 <div className="absolute bottom-3 left-3 flex flex-col gap-2 items-start">
                                     {image.aiModel && (
-                                        <Badge className="bg-tertiary text-white text-xs font-semibold px-3 py-1 shadow-lg flex items-center gap-1">
+                                        <span className="bg-tertiary text-white text-xs font-semibold px-3 py-1 shadow-lg flex items-center gap-1 rounded-full">
                                             <Sparkles className="h-3 w-3" />
                                             {image.aiModel}
-                                        </Badge>
+                                        </span>
                                     )}
                                     <div className="flex flex-wrap gap-1">
                                         {image.tags && image.tags.map((tag, i) => (
-                                            <Badge key={i} variant="secondary" className="bg-primary text-white text-xs px-2 py-1 shadow-lg flex items-center gap-1">
+                                            <span key={i} className="bg-primary text-white text-xs px-2 py-1 shadow-lg flex items-center gap-1 rounded-full">
                                                 <Tag className="h-3 w-3" />
                                                 {tag}
-                                            </Badge>
+                                            </span>
                                         ))}
                                     </div>
                                 </div>
@@ -354,7 +348,7 @@ export function ImageGallery() {
             {isModalOpen && modalImage && (
                 <div
                     id="extralarge-modal"
-                    className="fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/80 backdrop-blur-sm"
+                    className="fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/80"
                 >
                     <div className="relative w-full max-w-4xl max-h-[90vh]" ref={modalRef}>
                         <Card className="relative bg-white rounded-lg shadow-2xl overflow-hidden">
@@ -406,25 +400,25 @@ export function ImageGallery() {
                                 <div className="flex flex-col gap-3 p-4">
                                     {modalImage.aiModel && (
                                         <div className="flex items-center gap-2">
-                                            <Badge className="bg-tertiary text-white text-sm font-semibold px-3 py-1 shadow-md flex items-center gap-2">
+                                            <span className="bg-tertiary text-white text-sm font-semibold px-3 py-1 shadow-md flex items-center gap-2 rounded-full">
                                                 <Sparkles className="h-4 w-4" />
                                                 {modalImage.aiModel}
-                                            </Badge>
+                                            </span>
                                         </div>
                                     )}
                                     {modalImage.tags && modalImage.tags.length > 0 && (
                                         <div className="flex flex-wrap gap-2">
                                             {modalImage.tags.map((tag, i) => (
-                                                <Badge key={i} variant="secondary" className="bg-primary text-white text-sm px-3 py-1 shadow-md flex items-center gap-2">
+                                                <span key={i} className="bg-primary text-white text-sm px-3 py-1 shadow-md flex items-center gap-2 rounded-full">
                                                     <Tag className="h-4 w-4" />
                                                     {tag}
-                                                </Badge>
+                                                </span>
                                             ))}
                                         </div>
                                     )}
                                 </div>
 
-                                <Separator className="bg-gray-200" />
+                                <div className="border-t border-gray-200"></div>
 
                                 {/* Image */}
                                 <div className="p-4">

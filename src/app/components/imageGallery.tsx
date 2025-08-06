@@ -190,17 +190,17 @@ export function ImageGallery() {
             />
             
             {/* Filter Controls */}
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6 p-4 bg-secondary text-accent rounded-lg shadow-sm border border-primary w-full max-w-6xl">
-                <div className="flex items-center gap-2">
-                    <span className="font-medium text-accent">Filter by:</span>
+            <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between mb-8 p-6 sm:p-8 bg-secondary text-accent rounded-xl shadow-lg border border-primary/50 w-full max-w-6xl">
+                <div className="flex items-center gap-3">
+                    <span className="font-semibold text-accent text-base sm:text-lg">Filter by:</span>
                 </div>
                 
-                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
                     {/* AI Model Filter */}
                     <select
                         value={selectedModel}
                         onChange={(e) => setSelectedModel(e.target.value)}
-                        className="px-3 py-2 bg-secondary text-accent border border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-tertiary"
+                        className="px-4 py-3 bg-secondary text-accent border border-primary/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary focus:border-tertiary transition-colors duration-200"
                     >
                         <option value="">All Models</option>
                         {allModels.map((model) => (
@@ -212,7 +212,7 @@ export function ImageGallery() {
                     <select
                         value={selectedTag}
                         onChange={(e) => setSelectedTag(e.target.value)}
-                        className="px-3 py-2 bg-secondary text-accent border border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-tertiary"
+                        className="px-4 py-3 bg-secondary text-accent border border-primary/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary focus:border-tertiary transition-colors duration-200"
                     >
                         <option value="">All Tags</option>
                         {allTags.map((tag) => (
@@ -227,7 +227,7 @@ export function ImageGallery() {
                                 setSelectedModel('');
                                 setSelectedTag('');
                             }}
-                            className="bg-tertiary text-accent hover:bg-primary"
+                            className="bg-tertiary text-accent hover:bg-primary px-6 py-3 rounded-lg font-medium"
                             size="sm"
                         >
                             Clear Filters
@@ -236,18 +236,18 @@ export function ImageGallery() {
                 </div>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 w-full max-w-6xl">
+            <div className="grid gap-6 sm:gap-8 md:gap-6 lg:gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 w-full max-w-7xl">
                 {filteredImages.map((image, index) => {
                     const liked = hasLiked(image._id);
                     return (
                         <div key={index} className="group relative">
                             <Button
                                 onClick={() => toggleModal(image)}
-                                className="w-full h-full bg-transparent p-0 m-0 hover:scale-105 transition-transform duration-300 rounded-lg overflow-hidden shadow-lg hover:shadow-xl">
+                                className="w-full h-full bg-transparent p-0 m-0 hover:scale-105 transition-transform duration-300 rounded-xl overflow-hidden shadow-lg hover:shadow-xl">
                                 <GalleryImage src={image.uri} loading="eager" fullscreen={false} />
                             </Button>
                             {/* Heart Icon Overlay */}
-                            <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/50 backdrop-blur-sm rounded-full px-2 py-1">
+                            <div className="absolute top-3 right-3 flex items-center gap-2 bg-black/60 backdrop-blur-sm rounded-full px-3 py-2">
                                 <Button
                                     onClick={(e) => handleLike(e, image._id)}
                                     className="p-1 h-auto w-auto bg-transparent hover:bg-transparent"
@@ -337,12 +337,12 @@ export function ImageGallery() {
                     </div>
                 )}
             </div>
-            <div className="flex flex-wrap gap-2 justify-center items-center">
+            <div className="flex flex-wrap gap-3 sm:gap-4 justify-center items-center mt-12 sm:mt-16">
                 <div className="flex justify-center items-center">
                     <Button 
                         disabled={page === 0}
                         onClick={() => setPage(0)}
-                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-1"
+                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-2 px-4 py-2 rounded-lg font-medium"
                     >
                         <span>First</span>
                     </Button>
@@ -351,7 +351,7 @@ export function ImageGallery() {
                     <Button 
                         disabled={page === 0}
                         onClick={() => page > 0 && setPage(page - 1)}
-                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-1"
+                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-2 px-4 py-2 rounded-lg font-medium"
                     >
                         <ChevronLeft className="h-4 w-4" />
                         <span>Previous</span>
@@ -362,7 +362,7 @@ export function ImageGallery() {
                     <Button 
                         disabled={page >= totalPages - 1}
                         onClick={() => page < totalPages - 1 && setPage(page + 1)}
-                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-1"
+                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-2 px-4 py-2 rounded-lg font-medium"
                     >
                         <span>Next</span>
                         <ChevronRight className="h-4 w-4" />
@@ -372,7 +372,7 @@ export function ImageGallery() {
                     <Button 
                         disabled={page >= totalPages - 1}
                         onClick={() => setPage(totalPages - 1)}
-                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-1"
+                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-2 px-4 py-2 rounded-lg font-medium"
                     >
                         <span>Last</span>
                     </Button>

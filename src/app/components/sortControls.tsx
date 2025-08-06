@@ -47,34 +47,34 @@ export function SortControls({ sortBy, sortOrder, onSortChange }: SortControlsPr
   };
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-6 p-4 bg-secondary text-accent rounded-lg shadow-sm border border-primary">
-      <div className="flex items-center gap-2 text-gray-700">
-        <ArrowUpDown className="h-5 w-5 text-accent" />
-        <span className="font-medium text-accent">Sort by:</span>
+    <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between mb-8 p-6 sm:p-8 bg-secondary text-accent rounded-xl shadow-lg border border-primary/50">
+      <div className="flex items-center gap-3">
+        <ArrowUpDown className="h-5 w-5 sm:h-6 sm:w-6 text-accent" />
+        <span className="font-semibold text-accent text-base sm:text-lg">Sort by:</span>
       </div>
       
-      <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+      <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
         <Select value={sortBy} onValueChange={handleSortByChange}>
-          <SelectTrigger className="w-full sm:w-[180px] bg-secondary text-accent hover:bg-tertiary hover:text-accent border border-primary">
+          <SelectTrigger className="w-full sm:w-[200px] lg:w-[220px] bg-secondary text-accent hover:bg-tertiary hover:text-accent border border-primary/50 rounded-lg px-4 py-3">
             <SelectValue placeholder="Sort by">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 {sortOptions.find(opt => opt.value === sortBy)?.icon && (
-                  <span className="h-4 w-4">
-                    {React.createElement(sortOptions.find(opt => opt.value === sortBy)!.icon, { className: "h-4 w-4" })}
+                  <span className="h-5 w-5">
+                    {React.createElement(sortOptions.find(opt => opt.value === sortBy)!.icon, { className: "h-5 w-5" })}
                   </span>
                 )}
-                {getCurrentSortOption()}
+                <span className="font-medium">{getCurrentSortOption()}</span>
               </div>
             </SelectValue>
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-secondary border border-primary/50">
             {sortOptions.map((option) => {
               const IconComponent = option.icon;
               return (
-                <SelectItem key={option.value} value={option.value} className="bg-secondary text-accent hover:bg-tertiary hover:text-accent">
-                  <div className="flex items-center gap-2">
-                    <IconComponent className="h-4 w-4" />
-                    {option.label}
+                <SelectItem key={option.value} value={option.value} className="bg-secondary text-accent hover:bg-tertiary hover:text-accent px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <IconComponent className="h-5 w-5" />
+                    <span className="font-medium">{option.label}</span>
                   </div>
                 </SelectItem>
               );
@@ -83,26 +83,26 @@ export function SortControls({ sortBy, sortOrder, onSortChange }: SortControlsPr
         </Select>
 
         <Select value={sortOrder} onValueChange={handleSortOrderChange}>
-          <SelectTrigger className="w-full sm:w-[160px] bg-secondary text-accent hover:bg-tertiary hover:text-accent border border-primary">
+          <SelectTrigger className="w-full sm:w-[180px] lg:w-[200px] bg-secondary text-accent hover:bg-tertiary hover:text-accent border border-primary/50 rounded-lg px-4 py-3">
             <SelectValue>
-              {getCurrentOrderOption()}
+              <span className="font-medium">{getCurrentOrderOption()}</span>
             </SelectValue>
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-secondary border border-primary/50">
             {sortBy === 'likes' ? (
               <>
-                <SelectItem value="desc" className="bg-secondary text-accent hover:bg-tertiary hover:text-accent">Most Popular</SelectItem>
-                <SelectItem value="asc" className="bg-secondary text-accent hover:bg-tertiary hover:text-accent">Least Popular</SelectItem>
+                <SelectItem value="desc" className="bg-secondary text-accent hover:bg-tertiary hover:text-accent px-4 py-3">Most Popular</SelectItem>
+                <SelectItem value="asc" className="bg-secondary text-accent hover:bg-tertiary hover:text-accent px-4 py-3">Least Popular</SelectItem>
               </>
             ) : sortBy === 'fileName' ? (
               <>
-                <SelectItem value="asc" className="bg-secondary text-accent hover:bg-tertiary hover:text-accent">A to Z</SelectItem>
-                <SelectItem value="desc" className="bg-secondary text-accent hover:bg-tertiary hover:text-accent">Z to A</SelectItem>
+                <SelectItem value="asc" className="bg-secondary text-accent hover:bg-tertiary hover:text-accent px-4 py-3">A to Z</SelectItem>
+                <SelectItem value="desc" className="bg-secondary text-accent hover:bg-tertiary hover:text-accent px-4 py-3">Z to A</SelectItem>
               </>
             ) : (
               <>
-                <SelectItem value="desc" className="bg-secondary text-accent hover:bg-tertiary hover:text-accent">Newest First</SelectItem>
-                <SelectItem value="asc" className="bg-secondary text-accent hover:bg-tertiary hover:text-accent">Oldest First</SelectItem>
+                <SelectItem value="desc" className="bg-secondary text-accent hover:bg-tertiary hover:text-accent px-4 py-3">Newest First</SelectItem>
+                <SelectItem value="asc" className="bg-secondary text-accent hover:bg-tertiary hover:text-accent px-4 py-3">Oldest First</SelectItem>
               </>
             )}
           </SelectContent>

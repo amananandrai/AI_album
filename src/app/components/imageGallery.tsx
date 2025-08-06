@@ -1,12 +1,18 @@
 'use client';
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import Image from "next/image";
 import { useContext, useEffect, useState, useRef, FormEvent } from "react";
 import { GalleryContext } from "../context/gallery";
-import { ChevronLeft, ChevronRight, Heart } from "lucide-react";
+import { ChevronLeft, ChevronRight, Heart, Filter, X, Image as ImageIcon, Sparkles, Tag, Eye } from "lucide-react";
 import { SortControls } from "./sortControls";
 import { IFile } from "../models/Files";
+import { Label } from "@/components/ui/label";
 
 export function ImageGallery() {
     const [page, setPage] = useState(0);
@@ -16,8 +22,8 @@ export function ImageGallery() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalImage, setModalImage] = useState<IFile | null>(null);
     const modalRef = useRef<HTMLDivElement>(null);
-    const [selectedModel, setSelectedModel] = useState<string>('');
-    const [selectedTag, setSelectedTag] = useState<string>('');
+    const [selectedModel, setSelectedModel] = useState<string>('all');
+    const [selectedTag, setSelectedTag] = useState<string>('all');
 
     // Upload form state
     const [uploading, setUploading] = useState(false);
@@ -111,7 +117,19 @@ export function ImageGallery() {
  
 
     if (images.length === 0) {
-        return <div>Loading...</div>
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <Card className="w-full max-w-md bg-secondary/50 backdrop-blur-sm border-primary/20">
+                    <CardContent className="flex flex-col items-center justify-center py-12">
+                        <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-4">
+                            <ImageIcon className="h-8 w-8 text-primary/60" />
+                        </div>
+                        <h3 className="text-xl font-semibold text-primary mb-2">No Images Found</h3>
+                        <p className="text-primary/70 text-center">The gallery is empty. Be the first to upload an image!</p>
+                    </CardContent>
+                </Card>
+            </div>
+        );
     }
 
     // Get unique models and tags for filter options
@@ -120,8 +138,8 @@ export function ImageGallery() {
 
     // Filter images based on selected model and tag
     const filteredImages = images.filter(image => {
-        const matchesModel = !selectedModel || image.aiModel === selectedModel;
-        const matchesTag = !selectedTag || (image.tags && image.tags.includes(selectedTag));
+        const matchesModel = selectedModel === 'all' || !selectedModel || image.aiModel === selectedModel;
+        const matchesTag = selectedTag === 'all' || !selectedTag || (image.tags && image.tags.includes(selectedTag));
         return matchesModel && matchesTag;
     });
 
@@ -136,8 +154,8 @@ export function ImageGallery() {
                         key={i}
                         className={
                           page === i
-                            ? "bg-tertiary text-accent font-bold border border-primary"
-                            : "bg-secondary text-accent hover:bg-tertiary hover:text-accent"
+                            ? "bg-tertiary text-accent font-bold border border-primary shadow-lg"
+                            : "bg-secondary text-accent hover:bg-tertiary hover:text-accent shadow-md"
                         }
                         onClick={() => setPage(i)}
                     >
@@ -159,8 +177,8 @@ export function ImageGallery() {
                         key={i}
                         className={
                           page === i
-                            ? "bg-tertiary text-accent font-bold border border-primary"
-                            : "bg-secondary text-accent hover:bg-tertiary hover:text-accent"
+                            ? "bg-tertiary text-accent font-bold border border-primary shadow-lg"
+                            : "bg-secondary text-accent hover:bg-tertiary hover:text-accent shadow-md"
                         }
                         onClick={() => setPage(i)}
                     >
@@ -170,10 +188,10 @@ export function ImageGallery() {
             }
 
             if (startPage > 0) {
-                pageNumbers.unshift(<Button key="start-ellipsis" className="bg-accent text-primary hover:bg-tertiary hover:text-accent">...</Button>);
+                pageNumbers.unshift(<Button key="start-ellipsis" className="bg-accent text-primary hover:bg-tertiary hover:text-accent shadow-md">...</Button>);
             }
             if (endPage < totalPages) {
-                pageNumbers.push(<Button key="end-ellipsis" className="bg-accent text-primary hover:bg-tertiary hover:text-accent">...</Button>);
+                pageNumbers.push(<Button key="end-ellipsis" className="bg-accent text-primary hover:bg-tertiary hover:text-accent shadow-md">...</Button>);
             }
         }
 
@@ -190,105 +208,190 @@ export function ImageGallery() {
             />
             
             {/* Filter Controls */}
-            <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between mb-8 p-6 sm:p-8 bg-secondary text-accent rounded-xl shadow-lg border border-primary/50 w-full max-w-6xl">
-                <div className="flex items-center gap-3">
-                    <span className="font-semibold text-accent text-base sm:text-lg">Filter by:</span>
-                </div>
-                
-                <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-                    {/* AI Model Filter */}
-                    <select
-                        value={selectedModel}
-                        onChange={(e) => setSelectedModel(e.target.value)}
-                        className="px-4 py-3 bg-secondary text-accent border border-primary/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary focus:border-tertiary transition-colors duration-200"
-                    >
-                        <option value="">All Models</option>
-                        {allModels.map((model) => (
-                            <option key={model} value={model}>{model}</option>
-                        ))}
-                    </select>
+            <Card className="w-full max-w-6xl bg-secondary/50 backdrop-blur-sm border-primary/20 shadow-xl">
+                <CardHeader className="pb-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-md">
+                            <Filter className="h-5 w-5 text-accent" />
+                        </div>
+                        <div>
+                            <CardTitle className="text-xl text-primary font-bold">Filter Gallery</CardTitle>
+                            <CardDescription className="text-primary/70">
+                                Filter images by AI model and tags
+                            </CardDescription>
+                        </div>
+                    </div>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                    <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
+                        <div className="flex items-center gap-3">
+                            <span className="font-semibold text-primary text-base">Filter by:</span>
+                        </div>
+                        
+                        <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+                            {/* AI Model Filter */}
+                            <div className="space-y-2">
+                                <Label className="text-sm font-medium text-primary/80">AI Model</Label>
+                                <Select value={selectedModel} onValueChange={setSelectedModel}>
+                                    <SelectTrigger className="w-full sm:w-48 bg-secondary/80 border-primary/30 text-accent focus:border-tertiary focus:ring-2 focus:ring-tertiary/20">
+                                        <SelectValue placeholder="All Models" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-secondary border-primary/30">
+                                        <SelectItem value="all">All Models</SelectItem>
+                                        {allModels.map((model) => (
+                                            <SelectItem key={model} value={model}>{model}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
 
-                    {/* Tag Filter */}
-                    <select
-                        value={selectedTag}
-                        onChange={(e) => setSelectedTag(e.target.value)}
-                        className="px-4 py-3 bg-secondary text-accent border border-primary/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-tertiary focus:border-tertiary transition-colors duration-200"
-                    >
-                        <option value="">All Tags</option>
-                        {allTags.map((tag) => (
-                            <option key={tag} value={tag}>{tag}</option>
-                        ))}
-                    </select>
+                            {/* Tag Filter */}
+                            <div className="space-y-2">
+                                <Label className="text-sm font-medium text-primary/80">Tag</Label>
+                                <Select value={selectedTag} onValueChange={setSelectedTag}>
+                                    <SelectTrigger className="w-full sm:w-48 bg-secondary/80 border-primary/30 text-accent focus:border-tertiary focus:ring-2 focus:ring-tertiary/20">
+                                        <SelectValue placeholder="All Tags" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-secondary border-primary/30">
+                                        <SelectItem value="all">All Tags</SelectItem>
+                                        {allTags.map((tag) => (
+                                            <SelectItem key={tag} value={tag}>{tag}</SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
 
-                    {/* Clear Filters */}
-                    {(selectedModel || selectedTag) && (
-                        <Button
-                            onClick={() => {
-                                setSelectedModel('');
-                                setSelectedTag('');
-                            }}
-                            className="bg-tertiary text-accent hover:bg-primary px-6 py-3 rounded-lg font-medium"
-                            size="sm"
-                        >
-                            Clear Filters
-                        </Button>
-                    )}
-                </div>
-            </div>
+                            {/* Clear Filters */}
+                            {(selectedModel !== 'all' || selectedTag !== 'all') && (
+                                <Button
+                                    onClick={() => {
+                                        setSelectedModel('all');
+                                        setSelectedTag('all');
+                                    }}
+                                    variant="outline"
+                                    className="border-primary/30 text-primary hover:bg-primary hover:text-accent shadow-md"
+                                    size="sm"
+                                >
+                                    <X className="h-4 w-4 mr-2" />
+                                    Clear Filters
+                                </Button>
+                            )}
+                        </div>
+                    </div>
 
+                    {/* Results Count */}
+                    <div className="flex items-center justify-between pt-4 border-t border-primary/20">
+                        <p className="text-sm text-primary/70">
+                            Showing {filteredImages.length} of {images.length} images
+                        </p>
+                        {(selectedModel !== 'all' || selectedTag !== 'all') && (
+                            <Badge variant="secondary" className="bg-tertiary text-white">
+                                Filtered
+                            </Badge>
+                        )}
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Gallery Grid */}
             <div className="grid gap-6 sm:gap-8 md:gap-6 lg:gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 w-full max-w-7xl">
                 {filteredImages.map((image, index) => {
                     const liked = hasLiked(image._id);
                     return (
-                        <div key={index} className="group relative">
-                            <Button
-                                onClick={() => toggleModal(image)}
-                                className="w-full h-full bg-transparent p-0 m-0 hover:scale-105 transition-transform duration-300 rounded-xl overflow-hidden shadow-lg hover:shadow-xl">
-                                <GalleryImage src={image.uri} loading="eager" fullscreen={false} />
-                            </Button>
-                            {/* Heart Icon Overlay */}
-                            <div className="absolute top-3 right-3 flex items-center gap-2 bg-black/60 backdrop-blur-sm rounded-full px-3 py-2">
+                        <Card key={index} className="group relative overflow-hidden bg-secondary/30 backdrop-blur-sm border-primary/20 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+                            <CardContent className="p-0">
                                 <Button
-                                    onClick={(e) => handleLike(e, image._id)}
-                                    className="p-1 h-auto w-auto bg-transparent hover:bg-transparent"
-                                    size="sm"
-                                    disabled={liked}
-                                    aria-label={liked ? 'Liked' : 'Like'}
-                                >
-                                    <Heart className="h-4 w-4" style={{ color: liked ? 'red' : (image.likes ? 'rgba(255,255,255,0.8)' : 'transparent'), fill: liked ? 'red' : 'none', stroke: liked ? 'red' : 'white' }} />
+                                    onClick={() => toggleModal(image)}
+                                    className="w-full h-full bg-transparent p-0 m-0 hover:bg-transparent relative overflow-hidden">
+                                    <GalleryImage src={image.uri} loading="eager" fullscreen={false} />
+                                    
+                                    {/* Overlay with info */}
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
+                                        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                            <Eye className="h-8 w-8 text-white" />
+                                        </div>
+                                    </div>
                                 </Button>
-                                <span className="text-white text-sm font-medium">{image.likes || 0}</span>
-                            </div>
-                            {/* Tags and AI Model */}
-                            <div className="absolute bottom-2 left-2 flex flex-col gap-1 items-start">
-                                {image.aiModel && (
-                                    <span className="bg-tertiary text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow">{image.aiModel}</span>
-                                )}
-                                <div className="flex flex-wrap gap-1">
-                                    {image.tags && image.tags.map((tag, i) => (
-                                        <span key={i} className="bg-primary text-white text-xs px-2 py-0.5 rounded-full shadow">{tag}</span>
-                                    ))}
+                                
+                                {/* Heart Icon Overlay */}
+                                <div className="absolute top-3 right-3 flex items-center gap-2 bg-black/60 backdrop-blur-sm rounded-full px-3 py-2">
+                                    <Button
+                                        onClick={(e) => handleLike(e, image._id)}
+                                        className="p-1 h-auto w-auto bg-transparent hover:bg-transparent"
+                                        size="sm"
+                                        disabled={liked}
+                                        aria-label={liked ? 'Liked' : 'Like'}
+                                    >
+                                        <Heart className="h-4 w-4" style={{ color: liked ? 'red' : (image.likes ? 'rgba(255,255,255,0.8)' : 'transparent'), fill: liked ? 'red' : 'none', stroke: liked ? 'red' : 'white' }} />
+                                    </Button>
+                                    <span className="text-white text-sm font-medium">{image.likes || 0}</span>
                                 </div>
-                            </div>
-                        </div>
+                                
+                                {/* Tags and AI Model */}
+                                <div className="absolute bottom-3 left-3 flex flex-col gap-2 items-start">
+                                    {image.aiModel && (
+                                        <Badge className="bg-tertiary text-white text-xs font-semibold px-3 py-1 shadow-lg flex items-center gap-1">
+                                            <Sparkles className="h-3 w-3" />
+                                            {image.aiModel}
+                                        </Badge>
+                                    )}
+                                    <div className="flex flex-wrap gap-1">
+                                        {image.tags && image.tags.map((tag, i) => (
+                                            <Badge key={i} variant="secondary" className="bg-primary text-white text-xs px-2 py-1 shadow-lg flex items-center gap-1">
+                                                <Tag className="h-3 w-3" />
+                                                {tag}
+                                            </Badge>
+                                        ))}
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
                     );
                 })}
-                {isModalOpen && modalImage && (
-                    <div
-                        id="extralarge-modal"
-                        className="fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/80 backdrop-blur-sm"
-                    >
-                        <div className="relative w-full max-w-4xl max-h-[90vh]" ref={modalRef}>
-                            <div className="relative bg-white rounded-lg shadow-2xl">
-                                {/* Modal Title: Image Name */}
-                                <div className="flex flex-col items-center justify-center p-4 border-b">
-                                    <h2 className="text-lg font-bold text-primary text-center w-full truncate" title={modalImage.fileName}>{modalImage.fileName}</h2>
+            </div>
+
+            {/* Modal */}
+            {isModalOpen && modalImage && (
+                <div
+                    id="extralarge-modal"
+                    className="fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/80 backdrop-blur-sm"
+                >
+                    <div className="relative w-full max-w-4xl max-h-[90vh]" ref={modalRef}>
+                        <Card className="relative bg-white rounded-lg shadow-2xl overflow-hidden">
+                            {/* Modal Header */}
+                            <CardHeader className="pb-4 border-b border-gray-200">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+                                            <ImageIcon className="h-5 w-5 text-accent" />
+                                        </div>
+                                        <div>
+                                            <CardTitle className="text-lg font-bold text-primary truncate" title={modalImage.fileName}>
+                                                {modalImage.fileName}
+                                            </CardTitle>
+                                            <CardDescription className="text-primary/70">
+                                                AI Generated Artwork
+                                            </CardDescription>
+                                        </div>
+                                    </div>
+                                    <Button
+                                        onClick={handleCloseModal}
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-gray-400 hover:text-gray-600"
+                                    >
+                                        <X className="h-5 w-5" />
+                                    </Button>
                                 </div>
-                                <div className="flex items-center justify-between p-4 border-b">
-                                    <div className="flex items-center gap-2">
+                            </CardHeader>
+
+                            {/* Modal Content */}
+                            <CardContent className="p-0">
+                                <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                                    <div className="flex items-center gap-3">
                                         <Button
                                             onClick={(e) => handleLike(e, modalImage._id)}
-                                            className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white"
+                                            className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white shadow-md"
                                             size="sm"
                                             disabled={hasLiked(modalImage._id)}
                                             aria-label={hasLiked(modalImage._id) ? 'Liked' : 'Like'}
@@ -297,52 +400,49 @@ export function ImageGallery() {
                                             <span>{modalImage.likes || 0}</span>
                                         </Button>
                                     </div>
-                                    <button
-                                        type="button"
-                                        className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center transition-colors"
-                                        onClick={handleCloseModal}
-                                    >
-                                        <svg
-                                            className="w-3 h-3"
-                                            aria-hidden="true"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 14 14"
-                                        >
-                                            <path
-                                                stroke="currentColor"
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-                                            />
-                                        </svg>
-                                        <span className="sr-only">Close modal</span>
-                                    </button>
                                 </div>
-                                {/* AI Model and Tags in Modal */}
-                                <div className="flex flex-col gap-2 p-4">
+
+                                {/* AI Model and Tags */}
+                                <div className="flex flex-col gap-3 p-4">
                                     {modalImage.aiModel && (
-                                        <span className="bg-tertiary text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow self-start">{modalImage.aiModel}</span>
+                                        <div className="flex items-center gap-2">
+                                            <Badge className="bg-tertiary text-white text-sm font-semibold px-3 py-1 shadow-md flex items-center gap-2">
+                                                <Sparkles className="h-4 w-4" />
+                                                {modalImage.aiModel}
+                                            </Badge>
+                                        </div>
                                     )}
-                                    <div className="flex flex-wrap gap-1">
-                                        {modalImage.tags && modalImage.tags.map((tag, i) => (
-                                            <span key={i} className="bg-primary text-white text-xs px-2 py-0.5 rounded-full shadow">{tag}</span>
-                                        ))}
-                                    </div>
+                                    {modalImage.tags && modalImage.tags.length > 0 && (
+                                        <div className="flex flex-wrap gap-2">
+                                            {modalImage.tags.map((tag, i) => (
+                                                <Badge key={i} variant="secondary" className="bg-primary text-white text-sm px-3 py-1 shadow-md flex items-center gap-2">
+                                                    <Tag className="h-4 w-4" />
+                                                    {tag}
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                    )}
                                 </div>
-                                <GalleryImage src={modalImage.uri} loading="lazy" fullscreen={true} />
-                            </div>
-                        </div>
+
+                                <Separator className="bg-gray-200" />
+
+                                {/* Image */}
+                                <div className="p-4">
+                                    <GalleryImage src={modalImage.uri} loading="lazy" fullscreen={true} />
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
-                )}
-            </div>
+                </div>
+            )}
+
+            {/* Pagination */}
             <div className="flex flex-wrap gap-3 sm:gap-4 justify-center items-center mt-12 sm:mt-16">
                 <div className="flex justify-center items-center">
                     <Button 
                         disabled={page === 0}
                         onClick={() => setPage(0)}
-                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-2 px-4 py-2 rounded-lg font-medium"
+                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-2 px-4 py-2 rounded-lg font-medium shadow-md"
                     >
                         <span>First</span>
                     </Button>
@@ -351,7 +451,7 @@ export function ImageGallery() {
                     <Button 
                         disabled={page === 0}
                         onClick={() => page > 0 && setPage(page - 1)}
-                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-2 px-4 py-2 rounded-lg font-medium"
+                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-2 px-4 py-2 rounded-lg font-medium shadow-md"
                     >
                         <ChevronLeft className="h-4 w-4" />
                         <span>Previous</span>
@@ -362,7 +462,7 @@ export function ImageGallery() {
                     <Button 
                         disabled={page >= totalPages - 1}
                         onClick={() => page < totalPages - 1 && setPage(page + 1)}
-                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-2 px-4 py-2 rounded-lg font-medium"
+                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-2 px-4 py-2 rounded-lg font-medium shadow-md"
                     >
                         <span>Next</span>
                         <ChevronRight className="h-4 w-4" />
@@ -372,7 +472,7 @@ export function ImageGallery() {
                     <Button 
                         disabled={page >= totalPages - 1}
                         onClick={() => setPage(totalPages - 1)}
-                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-2 px-4 py-2 rounded-lg font-medium"
+                        className="bg-secondary text-accent hover:bg-tertiary hover:text-accent flex items-center space-x-2 px-4 py-2 rounded-lg font-medium shadow-md"
                     >
                         <span>Last</span>
                     </Button>

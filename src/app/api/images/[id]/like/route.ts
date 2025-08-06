@@ -6,7 +6,7 @@ let dbConnection: Mongoose | null = null;
 
 export async function POST(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         // Establish connection if not already established
@@ -18,7 +18,7 @@ export async function POST(
             });
         }
 
-        const imageId = params.id;
+        const { id: imageId } = await params;
 
         // Find the image and increment likes
         const updatedImage = await UploadedImage.findByIdAndUpdate(

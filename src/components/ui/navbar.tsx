@@ -25,7 +25,7 @@ export function Navbar() {
           {/* Logo */}
           <div className="flex items-center space-x-2">
             <div className="bg-secondary p-2 rounded-lg">
-              <Image className="h-6 w-6 text-accent" />
+              <Image className="h-6 w-6 text-accent" aria-label="Gallery icon" />
             </div>
             <span className="text-xl font-bold text-accent">AI Gallery</span>
           </div>

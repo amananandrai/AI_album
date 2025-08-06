@@ -47,55 +47,82 @@ export async function POST(request: NextRequest) {
     const username = formData.get('username');
     const password = formData.get('password');
 
+    console.log('Upload API - Received credentials:', {
+        username: username ? '[PROVIDED]' : 'undefined',
+        password: password ? '[PROVIDED]' : 'undefined',
+        expectedUsername: process.env.USERNAME ? '[SET]' : 'undefined',
+        expectedPassword: process.env.PASSWORD ? '[SET]' : 'undefined'
+    });
+
     if (
         username !== process.env.USERNAME ||
         password !== process.env.PASSWORD
     ) {
+        console.log('Upload API - Authentication failed');
         return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const file = formData.get('file');
+    console.log('Upload API - Authentication successful');
+
+    const file = formData.get('image'); // Changed from 'file' to 'image'
     const title = formData.get('title') as string;
-    const tags = formData.get('tags') ? (formData.get('tags') as string).split(',').map(t => t.trim()) : [];
+    const tags = formData.get('tags') ? JSON.parse(formData.get('tags') as string) : []; // Parse JSON tags
     const aiModel = formData.get('aiModel') as string;
-    const prompt = formData.get('prompt') as string;
-    const description = formData.get('description') as string;
+    const prompts = formData.get('prompts') as string; // Changed from 'prompt' to 'prompts'
 
-    if (!file || typeof file === 'string') {
-        return Response.json({ error: 'No file uploaded' }, { status: 400 });
-    }
-
-    // Prepare file for upload
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const ext = file.name.split('.').pop() || 'jpg';
-    const key = `uploads/${uuidv4()}.${ext}`;
-
-    // Upload to R2
-    await s3.send(new PutObjectCommand({
-        Bucket: R2_BUCKET,
-        Key: key,
-        Body: buffer,
-        ContentType: file.type,
-        ACL: "public-read", // R2 ignores this, but S3 SDK requires it
-    }));
-
-    // Construct public URL
-    const uri = `${R2_PUBLIC_URL}/${key}`;
-
-    // Save to MongoDB
-    const doc = await UploadedImage.create({
-        fileName: file.name,
+    console.log('Upload API - Form data:', {
+        hasFile: !!file,
         title,
         tags,
         aiModel,
-        prompt,
-        description,
-        uri,
-        createdAt: new Date(),
+        prompts: prompts ? '[PROVIDED]' : 'undefined'
     });
 
-    return Response.json({ success: true, image: doc }, { status: 201 });
+    if (!file || typeof file === 'string') {
+        console.log('Upload API - No file uploaded');
+        return Response.json({ error: 'No file uploaded' }, { status: 400 });
+    }
+
+    try {
+        // Prepare file for upload
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        const ext = file.name.split('.').pop() || 'jpg';
+        const key = `uploads/${uuidv4()}.${ext}`;
+
+        console.log('Upload API - Uploading to R2:', { key, fileType: file.type });
+
+        // Upload to R2
+        await s3.send(new PutObjectCommand({
+            Bucket: R2_BUCKET,
+            Key: key,
+            Body: buffer,
+            ContentType: file.type,
+            ACL: "public-read", // R2 ignores this, but S3 SDK requires it
+        }));
+
+        // Construct public URL
+        const uri = `${R2_PUBLIC_URL}/${key}`;
+
+        console.log('Upload API - Saving to MongoDB');
+
+        // Save to MongoDB
+        const doc = await UploadedImage.create({
+            fileName: file.name,
+            title,
+            tags,
+            aiModel,
+            prompts, // Changed from 'prompt' to 'prompts'
+            uri,
+            createdAt: new Date(),
+        });
+
+        console.log('Upload API - Success');
+        return Response.json({ success: true, image: doc }, { status: 201 });
+    } catch (error) {
+        console.error('Upload API - Error:', error);
+        return Response.json({ error: 'Upload failed' }, { status: 500 });
+    }
 }
 
 

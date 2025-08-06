@@ -94,13 +94,26 @@ export default function UploadPage() {
     formData.append('username', credentials.username);
     formData.append('password', credentials.password);
 
+    console.log('Upload - Sending form data:', {
+      hasImage: formData.has('image'),
+      hasTitle: formData.has('title'),
+      hasAiModel: formData.has('aiModel'),
+      hasTags: formData.has('tags'),
+      hasPrompts: formData.has('prompts'),
+      hasUsername: formData.has('username'),
+      hasPassword: formData.has('password'),
+      tags: JSON.stringify(tags)
+    });
+
     try {
       const res = await fetch('/api/images', {
         method: 'POST',
         body: formData,
       });
 
+      console.log('Upload - Response status:', res.status);
       const data = await res.json();
+      console.log('Upload - Response data:', data);
 
       if (!res.ok) throw new Error(data.error || 'Upload failed');
       setUploadSuccess('Image uploaded successfully!');
@@ -108,6 +121,7 @@ export default function UploadPage() {
       setTags([]);
       setNewTag('');
     } catch (err: any) {
+      console.error('Upload - Error:', err);
       setUploadError(err.message);
     } finally {
       setUploading(false);

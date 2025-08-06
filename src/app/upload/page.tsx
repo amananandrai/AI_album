@@ -17,6 +17,7 @@ export default function UploadPage() {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState('');
+  const [credentials, setCredentials] = useState<{ username: string; password: string } | null>(null);
 
   // Handle login
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
@@ -51,6 +52,7 @@ export default function UploadPage() {
       if (response.ok) {
         setLoggedIn(true);
         setLoginError(null);
+        setCredentials({ username, password });
         console.log('Login successful - setting loggedIn to true');
       } else {
         setLoginError(data.error || 'Login failed');
@@ -72,6 +74,12 @@ export default function UploadPage() {
       return;
     }
     
+    // Check if user is logged in
+    if (!credentials) {
+      setUploadError('Please login first');
+      return;
+    }
+    
     setUploading(true);
     setUploadError(null);
     setUploadSuccess(null);
@@ -81,6 +89,10 @@ export default function UploadPage() {
     
     // Add tags to form data
     formData.append('tags', JSON.stringify(tags));
+
+    // Add authentication credentials to form data
+    formData.append('username', credentials.username);
+    formData.append('password', credentials.password);
 
     try {
       const res = await fetch('/api/images', {
@@ -217,7 +229,10 @@ export default function UploadPage() {
             {/* Logout Button */}
             <div className="flex justify-end">
               <Button 
-                onClick={() => setLoggedIn(false)} 
+                onClick={() => {
+                  setLoggedIn(false);
+                  setCredentials(null);
+                }} 
                 variant="outline"
                 className="border-primary text-primary hover:bg-primary hover:text-accent"
               >

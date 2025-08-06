@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# AI Gallery
 
-## Getting Started
+A modern web application for showcasing AI-generated artwork with advanced filtering, sorting, and upload capabilities.
 
-First, run the development server:
+## Features
 
+- **Image Gallery**: Browse AI-generated images with responsive grid layout
+- **Advanced Filtering**: Filter by AI model and tags
+- **Sorting Options**: Sort by date, popularity, or filename
+- **Upload System**: Secure upload with authentication
+- **Like System**: Interactive like functionality
+- **Responsive Design**: Mobile-friendly interface
+- **Modal View**: Full-screen image viewing
+
+## Environment Variables
+
+To configure the application, you need to set the following environment variables in your Vercel deployment:
+
+### Authentication (Required)
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+USERNAME=your_upload_username
+PASSWORD=your_upload_password
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Database (Optional - if using MongoDB)
+```bash
+MONGODB_URI=your_mongodb_connection_string
+MONGODB_USER=your_mongodb_username
+MONGODB_PASS=your_mongodb_password
+MONGODB_DBNAME=your_database_name
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Cloud Storage (Optional - if using Cloudflare R2)
+```bash
+R2_ACCOUNT_ID=your_r2_account_id
+R2_ACCESS_KEY_ID=your_r2_access_key_id
+R2_SECRET_ACCESS_KEY=your_r2_secret_access_key
+R2_BUCKET_NAME=your_r2_bucket_name
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Setup
 
-## Learn More
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Set up environment variables in Vercel dashboard
+4. Deploy to Vercel
 
-To learn more about Next.js, take a look at the following resources:
+## Usage
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Browse Gallery**: Visit the home page to view all uploaded images
+- **Upload Images**: Navigate to `/upload` and login with your credentials
+- **Filter & Sort**: Use the controls to find specific images
+- **Like Images**: Click the heart icon to like images
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Technology Stack
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- **Frontend**: Next.js 15, React 18, TypeScript
+- **Styling**: Tailwind CSS v4
+- **UI Components**: Radix UI, Lucide React icons
+- **Backend**: Next.js API routes
+- **Database**: MongoDB (optional)
+- **Storage**: Cloudflare R2 (optional)

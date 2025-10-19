@@ -143,3 +143,25 @@
     box-shadow: 0 0 30px rgba(99, 102, 241, 0.6);
   }
 }
+
+/* 🌙 Custom Dark Blue Gradient Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f172a; /* dark navy base */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #4d1e8a 0%, #a53bf6 100%);
+  border-radius: 10px;
+  border: 2px solid #0f172a; /* creates a gap between thumb and track */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #7e25eb 0%, #db60fa 100%);
+}
+

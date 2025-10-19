@@ -1,40 +1,56 @@
 'use client';
 
 import { Button } from './button';
-import { Image, Home, Info, Contact } from 'lucide-react';
+import { Image, Home, Info, Contact, Upload, Sparkles } from 'lucide-react';
 
 export function Navbar() {
   const navItems = [
     { name: 'Home', href: '/', icon: Home },
     { name: 'Gallery', href: '#gallery', icon: Image },
+    { name: 'Upload', href: '/upload', icon: Upload },
     { name: 'About', href: '#about', icon: Info },
     { name: 'Contact', href: '#contact', icon: Contact },
   ];
 
   return (
-    <nav className="bg-primary border-b border-secondary sticky top-0 z-40 shadow-lg">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 xl:px-16">
-        <div className="flex justify-between items-center h-16 sm:h-20">
+    <nav className="glass sticky top-0 z-50 backdrop-blur-md border-b border-white/10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-14 sm:h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-3 sm:space-x-4">
-            <div className="bg-secondary p-2.5 sm:p-3 rounded-lg shadow-md">
-              <Image className="h-6 w-6 sm:h-7 sm:w-7 text-accent" aria-label="Gallery icon" />
+          <div className="flex items-center space-x-2 sm:space-x-3 animate-fade-in">
+            <div className="gradient-primary p-2 rounded-lg shadow-lg animate-glow">
+              <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-white" aria-label="AI Gallery icon" />
             </div>
-            <span className="text-xl sm:text-2xl font-bold text-accent">AI Gallery</span>
+            <div className="flex flex-col">
+              <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                AI Gallery
+              </span>
+              <span className="text-xs text-slate-400 hidden sm:block">Powered by Artificial Intelligence</span>
+            </div>
           </div>
 
-          {/* Navigation - Always visible */}
-          <div className="flex items-center space-x-4 sm:space-x-6 md:space-x-8 lg:space-x-10">
-            {navItems.map((item) => {
+          {/* Navigation */}
+          <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3">
+            {navItems.map((item, index) => {
               const IconComponent = item.icon;
               return (
                 <a
                   key={item.name}
                   href={item.href}
-                  className="flex items-center space-x-1 sm:space-x-2 text-accent hover:text-tertiary transition-colors duration-200 font-medium px-2 sm:px-3 py-2 rounded-lg hover:bg-secondary/20"
+                  className={`
+                    flex items-center space-x-1 sm:space-x-2 
+                    text-slate-200 hover:text-white 
+                    transition-all duration-300 
+                    font-medium px-2 sm:px-3 py-1.5 rounded-lg 
+                    hover:bg-white/10 hover:backdrop-blur-sm
+                    hover:scale-105 hover:shadow-lg
+                    animate-fade-in
+                    ${item.name === 'Upload' ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600' : ''}
+                  `}
+                  style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  <IconComponent className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span className="text-xs sm:text-sm md:text-base">{item.name}</span>
+                  <IconComponent className="h-4 w-4 sm:h-5 sm:w-5" />
+                  <span className="text-sm sm:text-base hidden sm:inline">{item.name}</span>
                 </a>
               );
             })}

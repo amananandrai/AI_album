@@ -150,79 +150,84 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="min-h-screen bg-accent py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-full mb-6 shadow-lg">
-            <Upload className="h-8 w-8 text-accent" />
+        <div className="text-center mb-16 animate-fade-in">
+          <div className="inline-flex items-center justify-center w-20 h-20 gradient-primary rounded-2xl mb-8 shadow-2xl animate-glow">
+            <Upload className="h-10 w-10 text-white" />
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold text-primary mb-4">
-            AI Gallery Upload
+          <h1 className="text-5xl sm:text-6xl font-bold mb-6">
+            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              Upload Your
+            </span>
+            <br />
+            <span className="text-white">AI Artwork</span>
           </h1>
-          <p className="text-xl text-primary/80 max-w-2xl mx-auto">
-            Share your AI-generated artwork with the community and inspire others
+          <p className="text-xl sm:text-2xl text-slate-300 max-w-3xl mx-auto leading-relaxed">
+            Share your AI-generated artwork with the community and inspire others with your 
+            <span className="text-purple-400 font-semibold"> creative vision</span>
           </p>
         </div>
 
         {/* Login Section */}
         {!loggedIn && (
-          <Card className="w-full shadow-2xl border-primary/20 bg-secondary/50">
+          <Card className="w-full glass border-white/20 shadow-2xl animate-slide-up">
             <CardHeader className="text-center pb-8">
-              <div className="mx-auto w-16 h-16 bg-primary rounded-full flex items-center justify-center mb-6 shadow-lg">
-                <User className="h-8 w-8 text-accent" />
+              <div className="mx-auto w-20 h-20 gradient-primary rounded-2xl flex items-center justify-center mb-8 shadow-2xl animate-glow">
+                <User className="h-10 w-10 text-white" />
               </div>
-              <CardTitle className="text-3xl text-primary font-bold">Welcome Back</CardTitle>
-              <CardDescription className="text-lg text-primary/70">
+              <CardTitle className="text-4xl text-white font-bold mb-4">Welcome Back</CardTitle>
+              <CardDescription className="text-xl text-slate-300">
                 Please login to upload images to the gallery
               </CardDescription>
             </CardHeader>
             <CardContent className="px-8 pb-8">
-              <form onSubmit={handleLogin} className="space-y-6">
-                <div className="space-y-3">
-                  <Label htmlFor="username" className="text-primary font-semibold text-base">
+              <form onSubmit={handleLogin} className="space-y-8">
+                <div className="space-y-4">
+                  <Label htmlFor="username" className="text-white font-semibold text-lg">
                     Username
                   </Label>
                   <div className="relative">
-                    <User className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-primary/50" />
+                    <User className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-slate-400" />
                     <Input
                       id="username"
                       name="username"
                       type="text"
                       autoComplete="username"
                       placeholder="Enter your username"
-                      className="pl-12 h-12 bg-secondary/80 border-primary/30 text-accent placeholder:text-accent/60 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 text-base"
+                      className="pl-14 h-14 glass border border-white/20 text-white placeholder:text-slate-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 text-lg rounded-xl bg-white/5"
                       required
                     />
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  <Label htmlFor="password" className="text-primary font-semibold text-base">
+                <div className="space-y-4">
+                  <Label htmlFor="password" className="text-white font-semibold text-lg">
                     Password
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-primary/50" />
+                    <Lock className="absolute left-4 top-1/2 transform -translate-y-1/2 h-6 w-6 text-slate-400" />
                     <Input
                       id="password"
                       name="password"
                       type="password"
                       autoComplete="current-password"
                       placeholder="Enter your password"
-                      className="pl-12 h-12 bg-secondary/80 border-primary/30 text-accent placeholder:text-accent/60 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 text-base"
+                      className="pl-14 h-14 glass border border-white/20 text-white placeholder:text-slate-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 text-lg rounded-xl bg-white/5"
                       required
                     />
                   </div>
                 </div>
 
-                <Button type="submit" className="w-full h-12 bg-primary hover:bg-primary/90 text-accent font-semibold text-base shadow-lg hover:shadow-xl transition-all duration-200">
+                <Button type="submit" className="w-full h-14 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold text-lg shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 hover:scale-[1.02] rounded-xl">
                   Sign In
                 </Button>
 
                 {loginError && (
-                  <Alert className="border-red-500/50 bg-red-50/50">
-                    <AlertCircle className="h-5 w-5 text-red-500" />
-                    <AlertDescription className="text-red-700 font-medium">
+                  <Alert className="glass border border-red-500/50 bg-red-500/10">
+                    <AlertCircle className="h-5 w-5 text-red-400" />
+                    <AlertDescription className="text-red-300 font-medium">
                       {loginError}
                     </AlertDescription>
                   </Alert>
@@ -236,38 +241,37 @@ export default function UploadPage() {
         {loggedIn && (
           <div className="space-y-8">
             {/* Success Message */}
-            <Alert className="border-green-500/50 bg-green-50/50">
-              <CheckCircle className="h-5 w-5 text-green-500" />
-              <AlertDescription className="text-green-700 font-medium">
+            <Alert className="glass border border-green-500/50 bg-green-500/10 animate-fade-in">
+              <CheckCircle className="h-6 w-6 text-green-400" />
+              <AlertDescription className="text-green-300 font-medium text-lg">
                 Successfully logged in! You can now upload your AI-generated images.
               </AlertDescription>
             </Alert>
 
             {/* Logout Button */}
-            <div className="flex justify-end">
+            <div className="flex justify-end animate-fade-in" style={{animationDelay: '0.2s'}}>
               <Button 
                 onClick={() => {
                   setLoggedIn(false);
                   setCredentials(null);
                 }} 
-                variant="outline"
-                className="border-primary/30 text-primary hover:bg-primary hover:text-accent shadow-md"
+                className="glass border border-white/20 text-white hover:bg-white/10 shadow-lg transition-all duration-300 hover:scale-105"
               >
-                <LogOut className="h-4 w-4 mr-2" />
+                <LogOut className="h-5 w-5 mr-2" />
                 Logout
               </Button>
             </div>
 
             {/* Upload Form */}
-            <Card className="w-full shadow-2xl border-primary/20 bg-secondary/50">
+            <Card className="w-full glass border-white/20 shadow-2xl animate-slide-up" style={{animationDelay: '0.4s'}}>
               <CardHeader className="pb-8">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center shadow-lg">
-                    <Upload className="h-6 w-6 text-accent" />
+                <div className="flex items-center gap-6">
+                  <div className="w-16 h-16 gradient-primary rounded-2xl flex items-center justify-center shadow-2xl animate-glow">
+                    <Upload className="h-8 w-8 text-white" />
                   </div>
                   <div>
-                    <CardTitle className="text-3xl text-primary font-bold">Upload Image</CardTitle>
-                    <CardDescription className="text-lg text-primary/70">
+                    <CardTitle className="text-4xl text-white font-bold mb-2">Upload Image</CardTitle>
+                    <CardDescription className="text-xl text-slate-300">
                       Share your AI-generated artwork with detailed information
                     </CardDescription>
                   </div>
@@ -276,9 +280,9 @@ export default function UploadPage() {
               <CardContent className="px-8 pb-8">
                 <form onSubmit={handleUpload} className="space-y-8">
                   {/* Image Upload */}
-                  <div className="space-y-3">
-                    <Label htmlFor="image" className="text-primary font-semibold text-base flex items-center gap-2">
-                      <Image className="h-5 w-5" />
+                  <div className="space-y-4">
+                    <Label htmlFor="image" className="text-white font-semibold text-lg flex items-center gap-3">
+                      <Image className="h-6 w-6 text-purple-400" />
                       Image File
                     </Label>
                     <div className="relative">
@@ -287,21 +291,21 @@ export default function UploadPage() {
                         name="image"
                         type="file"
                         accept="image/*"
-                        className="h-12 bg-secondary/80 border-primary/30 text-accent file:bg-primary file:text-accent file:border-0 file:rounded-lg file:px-6 file:py-3 file:mr-4 file:cursor-pointer hover:file:bg-primary/90 file:font-semibold file:shadow-md"
+                        className="h-14 glass border border-white/20 text-white file:bg-gradient-to-r file:from-purple-500 file:to-pink-500 file:text-white file:border-0 file:rounded-xl file:px-6 file:py-3 file:mr-4 file:cursor-pointer hover:file:from-purple-600 hover:file:to-pink-600 file:font-semibold file:shadow-lg file:transition-all file:duration-300 rounded-xl bg-white/5"
                         required
                       />
                     </div>
-                    <p className="text-sm text-primary/60">
+                    <p className="text-sm text-slate-400">
                       Supported formats: JPG, PNG, GIF, WebP (Max 10MB)
                     </p>
                   </div>
 
-                  <div className="border-t border-primary/20"></div>
+                  <div className="border-t border-white/10"></div>
 
                   {/* Title */}
-                  <div className="space-y-3">
-                    <Label htmlFor="title" className="text-primary font-semibold text-base flex items-center gap-2">
-                      <FileText className="h-5 w-5" />
+                  <div className="space-y-4">
+                    <Label htmlFor="title" className="text-white font-semibold text-lg flex items-center gap-3">
+                      <FileText className="h-6 w-6 text-blue-400" />
                       Title *
                     </Label>
                     <Input
@@ -309,15 +313,15 @@ export default function UploadPage() {
                       name="title"
                       type="text"
                       placeholder="Enter a descriptive title for your image"
-                      className="h-12 bg-secondary/80 border-primary/30 text-accent placeholder:text-accent/60 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 text-base"
+                      className="h-14 glass border border-white/20 text-white placeholder:text-slate-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 text-lg rounded-xl bg-white/5"
                       required
                     />
                   </div>
 
                   {/* AI Model */}
-                  <div className="space-y-3">
-                    <Label htmlFor="aiModel" className="text-primary font-semibold text-base flex items-center gap-2">
-                      <Sparkles className="h-5 w-5" />
+                  <div className="space-y-4">
+                    <Label htmlFor="aiModel" className="text-white font-semibold text-lg flex items-center gap-3">
+                      <Sparkles className="h-6 w-6 text-pink-400" />
                       AI Model *
                     </Label>
                     <Input
@@ -325,78 +329,78 @@ export default function UploadPage() {
                       name="aiModel"
                       type="text"
                       placeholder="Enter the AI model used (e.g., DALL-E 3, Midjourney, Stable Diffusion)"
-                      className="h-12 bg-secondary/80 border-primary/30 text-accent placeholder:text-accent/60 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 text-base"
+                      className="h-14 glass border border-white/20 text-white placeholder:text-slate-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 text-lg rounded-xl bg-white/5"
                       required
                     />
                   </div>
 
-                  <div className="border-t border-primary/20"></div>
+                  <div className="border-t border-white/10"></div>
 
                   {/* Tags */}
-                  <div className="space-y-4">
-                    <Label className="text-primary font-semibold text-base flex items-center gap-2">
-                      <Tag className="h-5 w-5" />
+                  <div className="space-y-6">
+                    <Label className="text-white font-semibold text-lg flex items-center gap-3">
+                      <Tag className="h-6 w-6 text-green-400" />
                       Tags *
                     </Label>
-                    <div className="space-y-4">
-                      <div className="flex gap-3">
+                    <div className="space-y-6">
+                      <div className="flex gap-4">
                         <Input
                           value={newTag}
                           onChange={(e) => setNewTag(e.target.value)}
                           onKeyPress={handleTagKeyPress}
                           placeholder="Add tags (press Enter to add) - At least one tag required"
-                          className="flex-1 h-12 bg-secondary/80 border-primary/30 text-accent placeholder:text-accent/60 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 text-base"
+                          className="flex-1 h-14 glass border border-white/20 text-white placeholder:text-slate-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 text-lg rounded-xl bg-white/5"
                         />
                         <Button
                           type="button"
                           onClick={addTag}
-                          className="h-12 bg-primary hover:bg-primary/90 text-accent px-6 font-semibold shadow-md"
+                          className="h-14 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-8 font-semibold shadow-lg transition-all duration-300 hover:scale-105 rounded-xl"
                         >
-                          <Plus className="h-4 w-4 mr-2" />
+                          <Plus className="h-5 w-5 mr-2" />
                           Add
                         </Button>
                       </div>
                       {tags.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
+                        <div className="flex flex-wrap gap-3">
                           {tags.map((tag, index) => (
                             <span
                               key={index}
-                              className="bg-tertiary text-white hover:bg-tertiary/90 px-3 py-2 text-sm font-medium flex items-center gap-2 rounded-full"
+                              className="glass border border-white/20 text-white hover:bg-white/10 px-4 py-3 text-sm font-medium flex items-center gap-2 rounded-full backdrop-blur-sm transition-all duration-300 hover:scale-105"
                             >
                               {tag}
                               <button
                                 type="button"
                                 onClick={() => removeTag(tag)}
-                                className="hover:text-red-200 transition-colors"
+                                className="hover:text-red-400 transition-colors p-1 hover:bg-red-500/20 rounded-full"
                               >
-                                <X className="h-3 w-3" />
+                                <X className="h-4 w-4" />
                               </button>
                             </span>
                           ))}
                         </div>
                       )}
                       {tags.length === 0 && (
-                        <p className="text-sm text-red-500 font-medium">At least one tag is required</p>
+                        <p className="text-sm text-red-400 font-medium">At least one tag is required</p>
                       )}
                     </div>
                   </div>
 
-                  <div className="border-t border-primary/20"></div>
+                  <div className="border-t border-white/10"></div>
 
                   {/* Prompts */}
-                  <div className="space-y-3">
-                    <Label htmlFor="prompts" className="text-primary font-semibold text-base flex items-center gap-2">
-                      <Sparkles className="h-5 w-5" />
+                  <div className="space-y-4">
+                    <Label htmlFor="prompts" className="text-white font-semibold text-lg flex items-center gap-3">
+                      <Sparkles className="h-6 w-6 text-yellow-400" />
                       Prompts Used (Optional)
                     </Label>
                     <Textarea
                       id="prompts"
                       name="prompts"
                       placeholder="Describe the prompts you used to generate this image... (optional)"
-                      className="bg-secondary/80 border-primary/30 text-accent placeholder:text-accent/60 focus:border-tertiary focus:ring-2 focus:ring-tertiary/20 min-h-[120px] text-base resize-none"
-                      rows={4}
+                      className="glass border border-white/20 text-white placeholder:text-slate-400 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 min-h-[140px] text-lg resize-none rounded-xl bg-white/5 p-4"
+                      rows={5}
                     />
-                    <p className="text-sm text-primary/60">
+                    <p className="text-sm text-slate-400">
                       Share the prompts that helped create this artwork (optional)
                     </p>
                   </div>
@@ -405,35 +409,35 @@ export default function UploadPage() {
                   <Button 
                     type="submit" 
                     disabled={uploading || tags.length === 0}
-                    className="w-full h-14 bg-primary hover:bg-primary/90 text-accent font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200"
+                    className="w-full h-16 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:from-gray-500 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-bold text-xl shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 hover:scale-[1.02] rounded-xl"
                   >
                     {uploading ? (
                       <>
-                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-accent mr-3"></div>
-                        Uploading...
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
+                        Uploading Your Masterpiece...
                       </>
                     ) : (
                       <>
-                        <Upload className="h-5 w-5 mr-3" />
-                        Upload Image
+                        <Upload className="h-6 w-6 mr-3" />
+                        Upload AI Artwork
                       </>
                     )}
                   </Button>
 
                   {/* Error/Success Messages */}
                   {uploadError && (
-                    <Alert className="border-red-500/50 bg-red-50/50">
-                      <AlertCircle className="h-5 w-5 text-red-500" />
-                      <AlertDescription className="text-red-700 font-medium">
+                    <Alert className="glass border border-red-500/50 bg-red-500/10 animate-fade-in">
+                      <AlertCircle className="h-6 w-6 text-red-400" />
+                      <AlertDescription className="text-red-300 font-medium text-lg">
                         {uploadError}
                       </AlertDescription>
                     </Alert>
                   )}
 
                   {uploadSuccess && (
-                    <Alert className="border-green-500/50 bg-green-50/50">
-                      <CheckCircle className="h-5 w-5 text-green-500" />
-                      <AlertDescription className="text-green-700 font-medium">
+                    <Alert className="glass border border-green-500/50 bg-green-500/10 animate-fade-in">
+                      <CheckCircle className="h-6 w-6 text-green-400" />
+                      <AlertDescription className="text-green-300 font-medium text-lg">
                         {uploadSuccess}
                       </AlertDescription>
                     </Alert>

@@ -92,7 +92,7 @@ export function ImageGallery() {
         fetchImages(page, sortBy, sortOrder).then((data) => {
             setImages(data.rows);
         });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, sortBy, sortOrder]);
 
     useEffect(() => {
@@ -108,12 +108,12 @@ export function ImageGallery() {
             document.removeEventListener('keydown', handleKeyDown);
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isModalOpen]);
 
- 
 
-    if (images.length === 0) {
+
+    if (!images || images.length === 0) {
         return (
             <div className="flex items-center justify-center min-h-[400px]">
                 <Card className="glass border-white/20 w-full max-w-md animate-fade-in">
@@ -123,8 +123,8 @@ export function ImageGallery() {
                         </div>
                         <h3 className="text-2xl font-bold text-white mb-3">No Images Found</h3>
                         <p className="text-slate-300 text-center mb-6">The gallery is empty. Be the first to upload an image!</p>
-                        <a 
-                            href="/upload" 
+                        <a
+                            href="/upload"
                             className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-300 hover:scale-105"
                         >
                             <Sparkles className="h-4 w-4" />
@@ -137,11 +137,11 @@ export function ImageGallery() {
     }
 
     // Get unique models and tags for filter options
-    const allModels = Array.from(new Set(images.map(img => img.aiModel).filter(Boolean)));
-    const allTags = Array.from(new Set(images.flatMap(img => img.tags || []).filter(Boolean)));
+    const allModels = Array.from(new Set((images || []).map(img => img.aiModel).filter(Boolean)));
+    const allTags = Array.from(new Set((images || []).flatMap(img => img.tags || []).filter(Boolean)));
 
     // Filter images based on selected model and tag
-    const filteredImages = images.filter(image => {
+    const filteredImages = (images || []).filter(image => {
         const matchesModel = selectedModel === 'all' || !selectedModel || image.aiModel === selectedModel;
         const matchesTag = selectedTag === 'all' || !selectedTag || (image.tags && image.tags.includes(selectedTag));
         return matchesModel && matchesTag;
@@ -157,9 +157,9 @@ export function ImageGallery() {
                     <Button
                         key={i}
                         className={
-                          page === i
-                            ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold border-0 shadow-lg w-12 h-12 rounded-xl"
-                            : "glass border border-white/20 text-white hover:bg-white/10 shadow-lg w-12 h-12 rounded-xl transition-all duration-300 hover:scale-105"
+                            page === i
+                                ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold border-0 shadow-lg w-12 h-12 rounded-xl"
+                                : "glass border border-white/20 text-white hover:bg-white/10 shadow-lg w-12 h-12 rounded-xl transition-all duration-300 hover:scale-105"
                         }
                         onClick={() => setPage(i)}
                     >
@@ -180,9 +180,9 @@ export function ImageGallery() {
                     <Button
                         key={i}
                         className={
-                          page === i
-                            ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold border-0 shadow-lg w-12 h-12 rounded-xl"
-                            : "glass border border-white/20 text-white hover:bg-white/10 shadow-lg w-12 h-12 rounded-xl transition-all duration-300 hover:scale-105"
+                            page === i
+                                ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold border-0 shadow-lg w-12 h-12 rounded-xl"
+                                : "glass border border-white/20 text-white hover:bg-white/10 shadow-lg w-12 h-12 rounded-xl transition-all duration-300 hover:scale-105"
                         }
                         onClick={() => setPage(i)}
                     >
@@ -213,12 +213,12 @@ export function ImageGallery() {
     return (
         <>
             {/* Upload Form */}
-            <SortControls 
+            <SortControls
                 sortBy={sortBy}
                 sortOrder={sortOrder}
                 onSortChange={handleSortChange}
             />
-            
+
             {/* Filter Controls */}
             <Card className="w-full max-w-6xl glass border-white/20 shadow-2xl animate-fade-in">
                 <CardHeader className="pb-6">
@@ -239,7 +239,7 @@ export function ImageGallery() {
                         <div className="flex items-center gap-3">
                             <span className="font-semibold text-white text-lg">Filter by:</span>
                         </div>
-                        
+
                         <div className="flex flex-col sm:flex-row gap-6 w-full lg:w-auto">
                             {/* AI Model Filter */}
                             <div className="space-y-3">
@@ -293,7 +293,7 @@ export function ImageGallery() {
                     {/* Results Count */}
                     <div className="flex items-center justify-between pt-6 border-t border-white/10">
                         <p className="text-slate-300">
-                            Showing <span className="text-white font-semibold">{filteredImages.length}</span> of <span className="text-white font-semibold">{images.length}</span> images
+                            Showing <span className="text-white font-semibold">{filteredImages.length}</span> of <span className="text-white font-semibold">{(images || []).length}</span> images
                         </p>
                         {(selectedModel !== 'all' || selectedTag !== 'all') && (
                             <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
@@ -309,13 +309,13 @@ export function ImageGallery() {
                 {filteredImages.map((image, index) => {
                     const liked = hasLiked(image._id);
                     return (
-                        <Card key={index} className="group relative overflow-hidden glass border-white/10 shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 hover:scale-[1.02] hover:border-white/20 animate-fade-in" style={{animationDelay: `${index * 0.1}s`}}>
+                        <Card key={index} className="group relative overflow-hidden glass border-white/10 shadow-2xl hover:shadow-purple-500/20 transition-all duration-500 hover:scale-[1.02] hover:border-white/20 animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
                             <CardContent className="p-0">
                                 <Button
                                     onClick={() => toggleModal(image)}
                                     className="w-full h-full bg-transparent p-0 m-0 hover:bg-transparent relative overflow-hidden">
                                     <GalleryImage src={image.uri} loading="eager" fullscreen={false} />
-                                    
+
                                     {/* Overlay with info */}
                                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center">
                                         <div className="flex items-center gap-4 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
@@ -326,7 +326,7 @@ export function ImageGallery() {
                                         </div>
                                     </div>
                                 </Button>
-                                
+
                                 {/* Heart Icon Overlay */}
                                 <div className="absolute top-4 right-4 flex items-center gap-2 glass rounded-full px-4 py-2 backdrop-blur-md">
                                     <Button
@@ -340,7 +340,7 @@ export function ImageGallery() {
                                     </Button>
                                     <span className="text-white text-sm font-semibold">{image.likes || 0}</span>
                                 </div>
-                                
+
                                 {/* Tags and AI Model */}
                                 <div className="absolute bottom-4 left-4 flex flex-col gap-2 items-start max-w-[calc(100%-8rem)]">
                                     {image.aiModel && (
@@ -410,11 +410,10 @@ export function ImageGallery() {
                                     <div className="flex items-center gap-4">
                                         <Button
                                             onClick={(e) => handleLike(e, modalImage._id)}
-                                            className={`flex items-center gap-3 px-4 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105 ${
-                                                hasLiked(modalImage._id) 
-                                                    ? 'bg-red-500 hover:bg-red-600 text-white' 
-                                                    : 'glass border border-white/20 text-white hover:bg-white/10'
-                                            }`}
+                                            className={`flex items-center gap-3 px-4 py-2 rounded-xl font-semibold transition-all duration-300 hover:scale-105 ${hasLiked(modalImage._id)
+                                                ? 'bg-red-500 hover:bg-red-600 text-white'
+                                                : 'glass border border-white/20 text-white hover:bg-white/10'
+                                                }`}
                                             disabled={hasLiked(modalImage._id)}
                                             aria-label={hasLiked(modalImage._id) ? 'Liked' : 'Like'}
                                         >
@@ -473,14 +472,14 @@ export function ImageGallery() {
             {/* Pagination */}
             {totalPages > 1 && (
                 <div className="flex flex-wrap gap-4 justify-center items-center mt-16 animate-fade-in">
-                    <Button 
+                    <Button
                         disabled={page === 0}
                         onClick={() => setPage(0)}
                         className="glass border border-white/20 text-white hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 px-6 py-3 rounded-xl font-medium shadow-lg transition-all duration-300 hover:scale-105"
                     >
                         <span>First</span>
                     </Button>
-                    <Button 
+                    <Button
                         disabled={page === 0}
                         onClick={() => page > 0 && setPage(page - 1)}
                         className="glass border border-white/20 text-white hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 px-6 py-3 rounded-xl font-medium shadow-lg transition-all duration-300 hover:scale-105"
@@ -488,12 +487,12 @@ export function ImageGallery() {
                         <ChevronLeft className="h-5 w-5" />
                         <span>Previous</span>
                     </Button>
-                    
+
                     <div className="flex gap-2">
                         {renderPageNumbers()}
                     </div>
-                    
-                    <Button 
+
+                    <Button
                         disabled={page >= totalPages - 1}
                         onClick={() => page < totalPages - 1 && setPage(page + 1)}
                         className="glass border border-white/20 text-white hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 px-6 py-3 rounded-xl font-medium shadow-lg transition-all duration-300 hover:scale-105"
@@ -501,7 +500,7 @@ export function ImageGallery() {
                         <span>Next</span>
                         <ChevronRight className="h-5 w-5" />
                     </Button>
-                    <Button 
+                    <Button
                         disabled={page >= totalPages - 1}
                         onClick={() => setPage(totalPages - 1)}
                         className="glass border border-white/20 text-white hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 px-6 py-3 rounded-xl font-medium shadow-lg transition-all duration-300 hover:scale-105"

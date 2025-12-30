@@ -305,7 +305,7 @@ export function ImageGallery() {
             </Card>
 
             {/* Gallery Grid */}
-            <div className="grid gap-4 sm:gap-5 md:gap-4 lg:gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 w-full max-w-7xl">
+            <div className="grid gap-4 sm:gap-5 md:gap-4 lg:gap-5 grid-cols-3 w-full max-w-7xl">
                 {filteredImages.map((image, index) => {
                     const liked = hasLiked(image._id);
                     return (

@@ -12,7 +12,7 @@ const baloo = Baloo_2({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#15110c",
+  themeColor: "#f7f3ec",
 };
 
 export const metadata: Metadata = {

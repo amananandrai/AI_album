@@ -330,7 +330,7 @@ export function ImageGallery() {
             )}
 
             {isModalOpen && modalImage && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#040302]/72 p-4">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 p-4">
                     <div className="relative max-h-[95vh] w-full max-w-5xl overflow-y-auto" ref={modalRef}>
                         <Card className="relative overflow-hidden">
                             <CardHeader className="border-b border-dashed border-ink-3 pb-5">

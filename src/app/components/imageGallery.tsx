@@ -1,6 +1,7 @@
 'use client';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useContext, useEffect, useLayoutEffect, useState, useRef } from "react";
 import { GalleryContext } from "../context/gallery";
 import { ChevronLeft, ChevronRight, Heart, Filter, X, Image as ImageIcon, Sparkles, Tag, ZoomIn } from "lucide-react";
@@ -196,67 +197,54 @@ export function ImageGallery() {
                 onSortChange={handleSortChange}
             />
 
-            <Card className="rise w-full">
-                <CardHeader className="pb-3">
-                    <div className="flex items-center gap-3">
-                        <div className="grid h-10 w-10 place-items-center rounded-full border-2 border-ink bg-peach text-on-sun shadow-sticker-sm">
-                            <Filter className="h-4 w-4" />
-                        </div>
-                        <div>
-                            <p className="kicker">Filter</p>
-                            <CardTitle className="text-xl">Model and tags</CardTitle>
-                        </div>
+            <div className="rise flex flex-col gap-4 rounded-sticker border-2 border-ink bg-card p-4 shadow-sticker sm:flex-row sm:items-center sm:justify-between sm:p-5">
+                <div className="flex items-center gap-3">
+                    <div className="grid h-10 w-10 place-items-center rounded-full border-2 border-ink bg-peach text-on-sun shadow-sticker-sm">
+                        <Filter className="h-4 w-4" />
                     </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
-                        <div className="space-y-2">
-                            <label className="kicker" htmlFor="model-filter">AI Model</label>
-                            <select
-                                id="model-filter"
-                                value={selectedModel}
-                                onChange={(e) => setSelectedModel(e.target.value)}
-                                className="field w-full sm:w-52"
-                            >
-                                <option value="all">All Models</option>
-                                {allModels.map((model) => (
-                                    <option key={model} value={model}>{model}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="space-y-2">
-                            <label className="kicker" htmlFor="tag-filter">Tag</label>
-                            <select
-                                id="tag-filter"
-                                value={selectedTag}
-                                onChange={(e) => setSelectedTag(e.target.value)}
-                                className="field w-full sm:w-52"
-                            >
-                                <option value="all">All Tags</option>
-                                {allTags.map((tag) => (
-                                    <option key={tag} value={tag}>{tag}</option>
-                                ))}
-                            </select>
-                        </div>
-                        {(selectedModel !== 'all' || selectedTag !== 'all') && (
-                            <Button
-                                onClick={() => {
-                                    setSelectedModel('all');
-                                    setSelectedTag('all');
-                                }}
-                                variant="outline"
-                                size="sm"
-                            >
-                                <X className="h-4 w-4" />
-                                Clear filters
-                            </Button>
-                        )}
+                    <div>
+                        <p className="kicker">Filter</p>
+                        <p className="display text-lg font-extrabold">Model and tags</p>
                     </div>
-                    <p className="border-t border-dashed border-ink-3 pt-4 text-ink-2">
-                        Showing <span className="font-semibold text-ink">{filteredImages.length}</span> of <span className="font-semibold text-ink">{galleryImages.length}</span> images
-                    </p>
-                </CardContent>
-            </Card>
+                </div>
+                <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+                    <Select value={selectedModel} onValueChange={setSelectedModel}>
+                        <SelectTrigger className="w-full sm:w-[200px]" aria-label="AI model">
+                            <SelectValue placeholder="All models" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All models</SelectItem>
+                            {allModels.map((model) => (
+                                <SelectItem key={model} value={model}>{model}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    <Select value={selectedTag} onValueChange={setSelectedTag}>
+                        <SelectTrigger className="w-full sm:w-[200px]" aria-label="Tag">
+                            <SelectValue placeholder="All tags" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All tags</SelectItem>
+                            {allTags.map((tag) => (
+                                <SelectItem key={tag} value={tag}>{tag}</SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    {(selectedModel !== 'all' || selectedTag !== 'all') && (
+                        <Button
+                            onClick={() => {
+                                setSelectedModel('all');
+                                setSelectedTag('all');
+                            }}
+                            variant="outline"
+                            size="sm"
+                        >
+                            <X className="h-4 w-4" />
+                            Clear
+                        </Button>
+                    )}
+                </div>
+            </div>
 
             {filteredImages.length === 0 ? (
                 <div className="flex min-h-[280px] items-center justify-center">

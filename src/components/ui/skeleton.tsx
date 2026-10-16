@@ -6,7 +6,7 @@ function Skeleton({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("animate-pulse rounded-md bg-white/10", className)}
+      className={cn("animate-pulse rounded-[9px] bg-empty", className)}
       {...props}
     />
   )
@@ -16,14 +16,14 @@ export { Skeleton }
 
 export function ImageSkeleton() {
   return (
-    <div className="glass rounded-xl overflow-hidden animate-pulse">
-      <div className="aspect-square bg-white/10"></div>
-      <div className="p-3 space-y-2">
-        <div className="h-4 bg-white/10 rounded w-3/4"></div>
-        <div className="h-3 bg-white/10 rounded w-1/2"></div>
+    <div className="overflow-hidden rounded-sticker border-2 border-ink bg-card shadow-sticker-sm animate-pulse">
+      <div className="aspect-square bg-empty"></div>
+      <div className="space-y-2 p-3">
+        <div className="h-4 w-3/4 rounded bg-empty"></div>
+        <div className="h-3 w-1/2 rounded bg-empty"></div>
         <div className="flex gap-2">
-          <div className="h-6 bg-white/10 rounded-full w-16"></div>
-          <div className="h-6 bg-white/10 rounded-full w-12"></div>
+          <div className="h-6 w-16 rounded-full bg-empty"></div>
+          <div className="h-6 w-12 rounded-full bg-empty"></div>
         </div>
       </div>
     </div>
@@ -32,7 +32,7 @@ export function ImageSkeleton() {
 
 export function GallerySkeleton() {
   return (
-    <div className="grid gap-4 sm:gap-5 md:gap-4 lg:gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 w-full max-w-7xl">
+    <div className="grid w-full max-w-7xl gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-3 md:gap-4 lg:grid-cols-3 lg:gap-5 xl:grid-cols-4">
       {Array.from({ length: 12 }).map((_, i) => (
         <ImageSkeleton key={i} />
       ))}

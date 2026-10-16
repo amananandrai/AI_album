@@ -12,6 +12,8 @@ export interface IFile {
     uri: string;
     tags?: string[];
     aiModel?: string;
+    width?: number;
+    height?: number;
 }
 
 const fileSchema = new Schema<IFile>({
@@ -24,7 +26,9 @@ const fileSchema = new Schema<IFile>({
     likes: { type: Number, required: false, default: 0, index: true },
     isDeleted: { type: Boolean, required: false, default: false, index: true },
     tags: { type: [String], required: false, default: [], index: true },
-    aiModel: { type: String, required: false, default: '', index: true }
+    aiModel: { type: String, required: false, default: '', index: true },
+    width: { type: Number, required: false },
+    height: { type: Number, required: false },
 })
 
 // Add compound indexes for better query performance

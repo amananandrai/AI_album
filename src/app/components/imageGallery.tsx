@@ -1,19 +1,13 @@
 'use client';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useContext, useEffect, useState, useRef } from "react";
+import { useContext, useEffect, useLayoutEffect, useState, useRef } from "react";
 import { GalleryContext } from "../context/gallery";
 import { ChevronLeft, ChevronRight, Heart, Filter, X, Image as ImageIcon, Sparkles, Tag, ZoomIn } from "lucide-react";
 import { SortControls } from "./sortControls";
 import { IFile } from "../models/Files";
 import Image from "next/image";
-
-function tileSpan(index: number) {
-    const slot = index % 6;
-    if (slot === 0) return "col-span-2 row-span-2";
-    if (slot === 2 || slot === 3) return "col-span-1";
-    return "col-span-2";
-}
+import { BENTO_ROW_HEIGHT, countColumnTracks, tilePlacement } from "../lib/tilePlacement";
 
 export function ImageGallery() {
     const [page, setPage] = useState(0);
@@ -23,8 +17,11 @@ export function ImageGallery() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalImage, setModalImage] = useState<IFile | null>(null);
     const modalRef = useRef<HTMLDivElement>(null);
+    const gridRef = useRef<HTMLDivElement | null>(null);
     const [selectedModel, setSelectedModel] = useState<string>('all');
     const [selectedTag, setSelectedTag] = useState<string>('all');
+    const [ratios, setRatios] = useState<Record<string, number>>({});
+    const [gridMetrics, setGridMetrics] = useState({ columns: 2, columnWidth: 180, gap: 12, rowGap: 12 });
 
     const openModal = (image: IFile) => {
         setIsModalOpen(true);
@@ -62,6 +59,30 @@ export function ImageGallery() {
     }, [page, sortBy, sortOrder]);
 
     useEffect(() => {
+        setRatios((current) => {
+            let changed = false;
+            const next = { ...current };
+            for (const image of images || []) {
+                if (!image._id || current[image._id] != null) continue;
+                if (image.width && image.height && image.width > 0 && image.height > 0) {
+                    next[image._id] = image.width / image.height;
+                    changed = true;
+                }
+            }
+            return changed ? next : current;
+        });
+    }, [images]);
+
+    const rememberSize = (id: string, width: number, height: number) => {
+        if (!id || width <= 0 || height <= 0) return;
+        setRatios((current) => {
+            const ratio = width / height;
+            if (current[id] && Math.abs(current[id] - ratio) < 0.01) return current;
+            return { ...current, [id]: ratio };
+        });
+    };
+
+    useEffect(() => {
         if (!isModalOpen) return;
 
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -90,6 +111,36 @@ export function ImageGallery() {
         const matchesTag = selectedTag === 'all' || !selectedTag || (image.tags && image.tags.includes(selectedTag));
         return matchesModel && matchesTag;
     });
+    const hasTiles = filteredImages.length > 0;
+
+    useLayoutEffect(() => {
+        const element = gridRef.current;
+        if (!element) return;
+
+        const measure = () => {
+            const styles = getComputedStyle(element);
+            const columns = countColumnTracks(styles.gridTemplateColumns);
+            const parsedGap = Number.parseFloat(styles.columnGap);
+            const gap = Number.isFinite(parsedGap) ? parsedGap : 12;
+            const parsedRowGap = Number.parseFloat(styles.rowGap);
+            const rowGap = Number.isFinite(parsedRowGap) ? parsedRowGap : gap;
+            const columnWidth = (element.clientWidth - gap * Math.max(0, columns - 1)) / columns;
+            if (!(columnWidth > 0)) return;
+            setGridMetrics((current) => (
+                current.columns === columns
+                && Math.abs(current.columnWidth - columnWidth) < 1
+                && current.gap === gap
+                && current.rowGap === rowGap
+                    ? current
+                    : { columns, columnWidth, gap, rowGap }
+            ));
+        };
+
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(element);
+        return () => observer.disconnect();
+    }, [hasTiles]);
 
     const renderPageNumbers = () => {
         const pageNumbers = [];
@@ -99,11 +150,9 @@ export function ImageGallery() {
             pageNumbers.push(
                 <Button
                     key={i}
-                    className={
-                        page === i
-                            ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold border-0 shadow-lg w-12 h-12 rounded-xl"
-                            : "glass border border-white/20 text-white hover:bg-white/10 shadow-lg w-12 h-12 rounded-xl"
-                    }
+                    size="icon"
+                    variant={page === i ? "default" : "outline"}
+                    className="h-10 w-10"
                     onClick={() => setPage(i)}
                 >
                     <span>{i + 1}</span>
@@ -121,7 +170,7 @@ export function ImageGallery() {
             }
             if (startPage > 0) {
                 pageNumbers.push(
-                    <Button key="start-ellipsis" className="glass border border-white/20 text-white w-12 h-12 rounded-xl cursor-default" disabled>
+                    <Button key="start-ellipsis" size="icon" variant="outline" className="h-10 w-10 cursor-default" disabled>
                         ...
                     </Button>
                 );
@@ -129,7 +178,7 @@ export function ImageGallery() {
             for (let i = startPage; i < endPage; i++) pushPage(i);
             if (endPage < totalPages) {
                 pageNumbers.push(
-                    <Button key="end-ellipsis" className="glass border border-white/20 text-white w-12 h-12 rounded-xl cursor-default" disabled>
+                    <Button key="end-ellipsis" size="icon" variant="outline" className="h-10 w-10 cursor-default" disabled>
                         ...
                     </Button>
                 );
@@ -140,98 +189,103 @@ export function ImageGallery() {
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-5">
             <SortControls
                 sortBy={sortBy}
                 sortOrder={sortOrder}
                 onSortChange={handleSortChange}
             />
 
-            <Card className="w-full glass border-white/20 shadow-2xl">
-                <CardHeader className="pb-4">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 gradient-primary rounded-xl flex items-center justify-center shadow-lg">
-                            <Filter className="h-6 w-6 text-white" />
+            <Card className="rise w-full">
+                <CardHeader className="pb-3">
+                    <div className="flex items-center gap-3">
+                        <div className="grid h-10 w-10 place-items-center rounded-full border-2 border-ink bg-peach text-on-sun shadow-sticker-sm">
+                            <Filter className="h-4 w-4" />
                         </div>
                         <div>
-                            <CardTitle className="text-2xl text-white font-bold">Filter Gallery</CardTitle>
-                            <CardDescription className="text-slate-300 text-lg">
-                                Filter images by AI model and tags
-                            </CardDescription>
+                            <p className="kicker">Filter</p>
+                            <CardTitle className="text-xl">Model and tags</CardTitle>
                         </div>
                     </div>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                    <div className="flex flex-col sm:flex-row gap-6">
-                        <div className="space-y-3">
-                            <label className="text-sm font-medium text-slate-200">AI Model</label>
+                <CardContent className="space-y-4">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-end">
+                        <div className="space-y-2">
+                            <label className="kicker" htmlFor="model-filter">AI Model</label>
                             <select
+                                id="model-filter"
                                 value={selectedModel}
                                 onChange={(e) => setSelectedModel(e.target.value)}
-                                className="w-full sm:w-52 px-4 py-3 glass border border-white/20 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white/5"
+                                className="field w-full sm:w-52"
                             >
-                                <option value="all" className="bg-slate-800">All Models</option>
+                                <option value="all">All Models</option>
                                 {allModels.map((model) => (
-                                    <option key={model} value={model} className="bg-slate-800">{model}</option>
+                                    <option key={model} value={model}>{model}</option>
                                 ))}
                             </select>
                         </div>
-                        <div className="space-y-3">
-                            <label className="text-sm font-medium text-slate-200">Tag</label>
+                        <div className="space-y-2">
+                            <label className="kicker" htmlFor="tag-filter">Tag</label>
                             <select
+                                id="tag-filter"
                                 value={selectedTag}
                                 onChange={(e) => setSelectedTag(e.target.value)}
-                                className="w-full sm:w-52 px-4 py-3 glass border border-white/20 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white/5"
+                                className="field w-full sm:w-52"
                             >
-                                <option value="all" className="bg-slate-800">All Tags</option>
+                                <option value="all">All Tags</option>
                                 {allTags.map((tag) => (
-                                    <option key={tag} value={tag} className="bg-slate-800">{tag}</option>
+                                    <option key={tag} value={tag}>{tag}</option>
                                 ))}
                             </select>
                         </div>
                         {(selectedModel !== 'all' || selectedTag !== 'all') && (
-                            <div className="flex items-end">
-                                <Button
-                                    onClick={() => {
-                                        setSelectedModel('all');
-                                        setSelectedTag('all');
-                                    }}
-                                    className="glass border border-white/20 text-white hover:bg-white/10"
-                                    size="sm"
-                                >
-                                    <X className="h-4 w-4 mr-2" />
-                                    Clear Filters
-                                </Button>
-                            </div>
+                            <Button
+                                onClick={() => {
+                                    setSelectedModel('all');
+                                    setSelectedTag('all');
+                                }}
+                                variant="outline"
+                                size="sm"
+                            >
+                                <X className="h-4 w-4" />
+                                Clear filters
+                            </Button>
                         )}
                     </div>
-                    <p className="text-slate-300 pt-4 border-t border-white/10">
-                        Showing <span className="text-white font-semibold">{filteredImages.length}</span> of <span className="text-white font-semibold">{galleryImages.length}</span> images
+                    <p className="border-t border-dashed border-ink-3 pt-4 text-ink-2">
+                        Showing <span className="font-semibold text-ink">{filteredImages.length}</span> of <span className="font-semibold text-ink">{galleryImages.length}</span> images
                     </p>
                 </CardContent>
             </Card>
 
             {filteredImages.length === 0 ? (
-                <div className="flex items-center justify-center min-h-[320px]">
-                    <Card className="glass border-white/20 w-full max-w-md">
-                        <CardContent className="flex flex-col items-center justify-center py-16">
-                            <div className="w-20 h-20 gradient-primary rounded-2xl flex items-center justify-center mb-6">
-                                <ImageIcon className="h-10 w-10 text-white" />
+                <div className="flex min-h-[280px] items-center justify-center">
+                    <Card className="w-full max-w-md border-dashed bg-watch">
+                        <CardContent className="flex flex-col items-center justify-center py-14 text-center">
+                            <div className="mark mb-5 grid h-16 w-16 place-items-center rounded-2xl border-2 border-ink bg-sun text-on-sun shadow-sticker">
+                                <ImageIcon className="h-8 w-8" />
                             </div>
-                            <h3 className="text-2xl font-bold text-white mb-3">No Images Found</h3>
-                            <p className="text-slate-300 text-center">The gallery is empty.</p>
+                            <h3 className="display text-3xl font-extrabold">No images found</h3>
+                            <p className="mt-2 text-center text-ink-2">The gallery is empty.</p>
                         </CardContent>
                     </Card>
                 </div>
             ) : (
-            <div className="grid grid-cols-2 lg:grid-cols-4 auto-rows-[9rem] sm:auto-rows-[11rem] gap-3 sm:gap-4">
+            <div
+                ref={gridRef}
+                className="grid grid-cols-2 lg:grid-cols-4 gap-3"
+                style={{ gridAutoRows: `${BENTO_ROW_HEIGHT}px`, gridAutoFlow: "dense" }}
+            >
                 {filteredImages.map((image, index) => {
                     const liked = hasLiked(image._id);
                     const title = image.title || image.fileName;
+                    const ratio = ratios[image._id] ?? (image.width && image.height ? image.width / image.height : 1);
+                    const { colSpan, rowSpan } = tilePlacement(ratio, gridMetrics.columns, gridMetrics.columnWidth, gridMetrics.gap, gridMetrics.rowGap);
                     return (
                         <article
                             key={image._id || index}
-                            className={`group relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900/40 ${tileSpan(index)}`}
+                            className="lift group relative overflow-hidden rounded-sticker border-2 border-ink bg-card shadow-sticker-sm"
+                            style={{ gridColumn: `span ${colSpan}`, gridRow: `span ${rowSpan}` }}
                         >
                             <button
                                 type="button"
@@ -239,31 +293,34 @@ export function ImageGallery() {
                                 className="absolute inset-0"
                                 aria-label={`View ${title}`}
                             >
-                                <GalleryImage src={image.uri} alt={title} />
+                                <GalleryImage
+                                    src={image.uri}
+                                    alt={title}
+                                    onMeasure={(width, height) => rememberSize(image._id, width, height)}
+                                />
                             </button>
-                            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-                            <div className="pointer-events-none absolute inset-x-0 bottom-0 p-3 sm:p-4 flex flex-col gap-1">
-                                <p className="text-white font-semibold truncate">{title}</p>
+                            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-paper via-paper/85 to-transparent p-3">
+                                <p className="display truncate text-base font-extrabold text-ink">{title}</p>
                                 {image.aiModel && (
-                                    <span className="inline-flex items-center gap-1 text-xs text-purple-100">
+                                    <span className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-sun">
                                         <Sparkles className="h-3 w-3" />
                                         {image.aiModel}
                                     </span>
                                 )}
                             </div>
-                            <div className="absolute top-3 right-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <span className="glass rounded-full p-2">
-                                    <ZoomIn className="h-4 w-4 text-white" />
+                            <div className="absolute right-2 top-2 z-10 flex items-center gap-2">
+                                <span className="grid h-8 w-8 place-items-center rounded-full border-2 border-ink bg-sun text-on-sun shadow-sticker-sm">
+                                    <ZoomIn className="h-3.5 w-3.5" />
                                 </span>
                                 <button
                                     type="button"
                                     onClick={(e) => handleLike(e, image._id)}
                                     disabled={liked}
                                     aria-label={liked ? 'Liked' : 'Like'}
-                                    className="glass rounded-full px-3 py-2 flex items-center gap-1"
+                                    className={`inline-flex items-center gap-1 rounded-full border-2 border-ink px-2.5 py-1 shadow-sticker-sm ${liked ? 'bg-mint text-on-mint' : 'bg-card text-ink'}`}
                                 >
-                                    <Heart className={`h-4 w-4 ${liked ? 'text-red-500 fill-red-500' : 'text-white'}`} />
-                                    <span className="text-white text-sm font-semibold">{image.likes || 0}</span>
+                                    <Heart className={`h-3.5 w-3.5 ${liked ? 'fill-current' : ''}`} />
+                                    <span className="font-display text-sm font-extrabold">{image.likes || 0}</span>
                                 </button>
                             </div>
                         </article>
@@ -273,64 +330,63 @@ export function ImageGallery() {
             )}
 
             {isModalOpen && modalImage && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center w-full p-4 bg-black/90 backdrop-blur-sm">
-                    <div className="relative w-full max-w-5xl max-h-[95vh] overflow-y-auto" ref={modalRef}>
-                        <Card className="relative glass border-white/20 shadow-2xl overflow-hidden">
-                            <CardHeader className="pb-6 border-b border-white/10">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#040302]/72 p-4">
+                    <div className="relative max-h-[95vh] w-full max-w-5xl overflow-y-auto" ref={modalRef}>
+                        <Card className="relative overflow-hidden">
+                            <CardHeader className="border-b border-dashed border-ink-3 pb-5">
                                 <div className="flex items-start justify-between gap-4">
-                                    <div>
-                                        <CardTitle className="text-xl font-bold text-white">
+                                    <div className="min-w-0">
+                                        <CardTitle className="text-2xl">
                                             {modalImage.title || modalImage.fileName}
                                         </CardTitle>
-                                        <CardDescription className="text-slate-300 text-base mt-2">
+                                        <CardDescription className="mt-2 text-base">
                                             {modalImage.description || 'AI generated artwork'}
                                         </CardDescription>
                                     </div>
                                     <Button
                                         onClick={handleCloseModal}
-                                        className="glass border border-white/20 text-white hover:bg-white/10 p-3"
-                                        size="sm"
+                                        variant="outline"
+                                        size="icon"
+                                        aria-label="Close"
                                     >
-                                        <X className="h-5 w-5" />
+                                        <X className="h-4 w-4" />
                                     </Button>
                                 </div>
                             </CardHeader>
                             <CardContent className="p-0">
-                                <div className="flex flex-wrap items-center gap-3 p-6 border-b border-white/10">
+                                <div className="flex flex-wrap items-center gap-3 border-b border-dashed border-ink-3 p-4 sm:p-6">
                                     <Button
                                         onClick={(e) => handleLike(e, modalImage._id)}
-                                        className={`flex items-center gap-2 px-4 py-2 rounded-xl ${hasLiked(modalImage._id)
-                                            ? 'bg-red-500 text-white'
-                                            : 'glass border border-white/20 text-white hover:bg-white/10'
-                                            }`}
+                                        variant="outline"
+                                        className={hasLiked(modalImage._id) ? 'bg-mint text-on-mint disabled:opacity-100' : undefined}
                                         disabled={hasLiked(modalImage._id)}
                                     >
-                                        <Heart className={`h-5 w-5 ${hasLiked(modalImage._id) ? 'fill-white' : ''}`} />
-                                        <span>{modalImage.likes || 0} Likes</span>
+                                        <Heart className={`h-4 w-4 ${hasLiked(modalImage._id) ? 'fill-current' : ''}`} />
+                                        <span>{modalImage.likes || 0} likes</span>
                                     </Button>
                                     {modalImage.aiModel && (
-                                        <span className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-semibold px-4 py-2 rounded-full inline-flex items-center gap-2">
-                                            <Sparkles className="h-4 w-4" />
+                                        <span className="pill bg-sun text-on-sun">
+                                            <Sparkles className="h-3.5 w-3.5" />
                                             {modalImage.aiModel}
                                         </span>
                                     )}
                                 </div>
                                 {modalImage.tags && modalImage.tags.length > 0 && (
-                                    <div className="flex flex-wrap gap-2 px-6 py-4 border-b border-white/10">
+                                    <div className="flex flex-wrap gap-2 border-b border-dashed border-ink-3 px-4 py-4 sm:px-6">
                                         {modalImage.tags.map((tag, i) => (
-                                            <span key={i} className="glass border border-white/20 text-white text-sm px-3 py-1 rounded-full inline-flex items-center gap-2">
-                                                <Tag className="h-4 w-4" />
+                                            <span key={i} className="pill bg-sky text-on-sun">
+                                                <Tag className="h-3.5 w-3.5" />
                                                 {tag}
                                             </span>
                                         ))}
                                     </div>
                                 )}
                                 {modalImage.prompts && (
-                                    <p className="px-6 py-4 text-slate-300 border-b border-white/10 whitespace-pre-wrap">
+                                    <p className="whitespace-pre-wrap border-b border-dashed border-ink-3 px-4 py-4 text-ink-2 sm:px-6">
                                         {modalImage.prompts}
                                     </p>
                                 )}
-                                <div className="p-6">
+                                <div className="p-4 sm:p-6">
                                     <GalleryImage src={modalImage.uri} alt={modalImage.title || modalImage.fileName} fullscreen />
                                 </div>
                             </CardContent>
@@ -340,35 +396,39 @@ export function ImageGallery() {
             )}
 
             {totalPages > 1 && (
-                <div className="flex flex-wrap gap-3 justify-center items-center">
+                <div className="flex flex-wrap items-center justify-center gap-2">
                     <Button
                         disabled={page === 0}
                         onClick={() => setPage(0)}
-                        className="glass border border-white/20 text-white hover:bg-white/10 disabled:opacity-50"
+                        variant="outline"
+                        size="sm"
                     >
                         First
                     </Button>
                     <Button
                         disabled={page === 0}
                         onClick={() => page > 0 && setPage(page - 1)}
-                        className="glass border border-white/20 text-white hover:bg-white/10 disabled:opacity-50"
+                        variant="outline"
+                        size="sm"
                     >
-                        <ChevronLeft className="h-5 w-5" />
+                        <ChevronLeft className="h-4 w-4" />
                         Previous
                     </Button>
                     <div className="flex gap-2">{renderPageNumbers()}</div>
                     <Button
                         disabled={page >= totalPages - 1}
                         onClick={() => page < totalPages - 1 && setPage(page + 1)}
-                        className="glass border border-white/20 text-white hover:bg-white/10 disabled:opacity-50"
+                        variant="outline"
+                        size="sm"
                     >
                         Next
-                        <ChevronRight className="h-5 w-5" />
+                        <ChevronRight className="h-4 w-4" />
                     </Button>
                     <Button
                         disabled={page >= totalPages - 1}
                         onClick={() => setPage(totalPages - 1)}
-                        className="glass border border-white/20 text-white hover:bg-white/10 disabled:opacity-50"
+                        variant="outline"
+                        size="sm"
                     >
                         Last
                     </Button>
@@ -378,7 +438,14 @@ export function ImageGallery() {
     );
 }
 
-function GalleryImage({ src, alt, fullscreen = false }: { src: string; alt: string; fullscreen?: boolean }) {
+function GalleryImage({ src, alt, fullscreen = false, onMeasure }: { src: string; alt: string; fullscreen?: boolean; onMeasure?: (width: number, height: number) => void }) {
+    const reportSize = (event: React.SyntheticEvent<HTMLImageElement>) => {
+        const image = event.currentTarget;
+        if (image.naturalWidth > 0 && image.naturalHeight > 0) {
+            onMeasure?.(image.naturalWidth, image.naturalHeight);
+        }
+    };
+
     if (fullscreen) {
         return (
             <Image
@@ -386,7 +453,7 @@ function GalleryImage({ src, alt, fullscreen = false }: { src: string; alt: stri
                 src={src}
                 width={1600}
                 height={1200}
-                className="h-auto w-full object-contain max-h-[70vh] rounded-xl"
+                className="h-auto max-h-[70vh] w-full rounded-[12px] border-2 border-ink object-contain"
                 sizes="(max-width: 1024px) 100vw, 1024px"
             />
         );
@@ -398,7 +465,8 @@ function GalleryImage({ src, alt, fullscreen = false }: { src: string; alt: stri
             src={src}
             fill
             className="object-cover"
-            sizes="(max-width: 1024px) 50vw, 25vw"
+            sizes="(max-width: 1024px) 50vw, 33vw"
+            onLoad={reportSize}
         />
     );
 }

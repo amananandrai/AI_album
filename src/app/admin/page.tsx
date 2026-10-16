@@ -38,16 +38,16 @@ function TagEditor({ tags, onChange }: { tags: string[]; onChange: (tags: string
                         }
                     }}
                     placeholder="Add a tag and press Enter"
-                    className="h-12 glass border border-white/20 text-white placeholder:text-slate-400 bg-white/5"
+                    className="h-12"
                 />
-                <Button type="button" onClick={addTag} className="h-12 bg-emerald-600 hover:bg-emerald-500 text-white">
+                <Button type="button" onClick={addTag} variant="secondary" className="h-12">
                     <Plus className="h-4 w-4 mr-1" />
                     Add
                 </Button>
             </div>
             <div className="flex flex-wrap gap-2">
                 {tags.map((tag) => (
-                    <span key={tag} className="glass border border-white/20 text-white px-3 py-1 rounded-full text-sm inline-flex items-center gap-2">
+                    <span key={tag} className="pill bg-sky text-on-sun">
                         {tag}
                         <button type="button" onClick={() => onChange(tags.filter((item) => item !== tag))} aria-label={`Remove ${tag}`}>
                             <X className="h-3 w-3" />
@@ -211,32 +211,33 @@ export default function AdminPage() {
     };
 
     if (!ready) {
-        return <main className="min-h-screen px-4 py-16 text-center text-slate-300">Loading admin...</main>;
+        return <main className="min-h-[50vh] px-4 py-16 text-center text-ink-2">Loading admin...</main>;
     }
 
     if (!authenticated) {
         return (
-            <main className="min-h-screen px-4 py-16">
-                <Card className="max-w-md mx-auto glass border-white/20">
+            <main className="mx-auto w-full max-w-md px-4 py-12 sm:py-16">
+                <Card className="rise">
                     <CardHeader>
-                        <CardTitle className="text-white text-3xl">Admin login</CardTitle>
-                        <CardDescription className="text-slate-300">Sign in to upload and edit gallery images.</CardDescription>
+                        <p className="kicker">Admin</p>
+                        <CardTitle className="text-3xl">Sign in</CardTitle>
+                        <CardDescription>Upload and edit gallery images.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleLogin} className="space-y-5">
                             <div className="space-y-2">
-                                <Label htmlFor="username" className="text-white">Username</Label>
-                                <Input id="username" name="username" autoComplete="username" required className="h-12 glass border-white/20 text-white bg-white/5" />
+                                <Label htmlFor="username">Username</Label>
+                                <Input id="username" name="username" autoComplete="username" required className="h-12" />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="password" className="text-white">Password</Label>
-                                <Input id="password" name="password" type="password" autoComplete="current-password" required className="h-12 glass border-white/20 text-white bg-white/5" />
+                                <Label htmlFor="password">Password</Label>
+                                <Input id="password" name="password" type="password" autoComplete="current-password" required className="h-12" />
                             </div>
-                            <Button type="submit" className="w-full h-12 bg-gradient-to-r from-purple-500 to-pink-500 text-white">Sign in</Button>
+                            <Button type="submit" className="h-12 w-full">Sign in</Button>
                             {loginError && (
-                                <Alert className="border-red-500/50 bg-red-500/10">
-                                    <AlertCircle className="h-4 w-4 text-red-400" />
-                                    <AlertDescription className="text-red-300">{loginError}</AlertDescription>
+                                <Alert variant="destructive">
+                                    <AlertCircle className="h-4 w-4" />
+                                    <AlertDescription>{loginError}</AlertDescription>
                                 </Alert>
                             )}
                         </form>
@@ -249,60 +250,61 @@ export default function AdminPage() {
     const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
     return (
-        <main className="min-h-screen px-4 sm:px-6 lg:px-8 pt-10 pb-16">
-            <div className="max-w-6xl mx-auto space-y-8">
+        <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-8 sm:px-6">
+            <div className="space-y-8">
                 <div className="flex items-center justify-between gap-4">
                     <div>
-                        <h1 className="text-3xl font-bold text-white">Admin</h1>
-                        <p className="text-slate-300">Upload images and edit their details.</p>
+                        <p className="kicker">Library</p>
+                        <h1 className="display text-3xl font-extrabold sm:text-4xl">Admin</h1>
+                        <p className="mt-1 text-ink-2">Upload images and edit their details.</p>
                     </div>
-                    <Button onClick={handleLogout} className="glass border border-white/20 text-white hover:bg-white/10">
-                        <LogOut className="h-4 w-4 mr-2" />
+                    <Button onClick={handleLogout} variant="outline">
+                        <LogOut className="h-4 w-4" />
                         Log out
                     </Button>
                 </div>
 
                 {notice && (
-                    <Alert className={notice.type === "success" ? "border-green-500/50 bg-green-500/10" : "border-red-500/50 bg-red-500/10"}>
-                        {notice.type === "success" ? <CheckCircle className="h-4 w-4 text-green-400" /> : <AlertCircle className="h-4 w-4 text-red-400" />}
-                        <AlertDescription className={notice.type === "success" ? "text-green-300" : "text-red-300"}>{notice.text}</AlertDescription>
+                    <Alert variant={notice.type === "success" ? "default" : "destructive"} className={notice.type === "success" ? "bg-mint text-on-mint" : undefined}>
+                        {notice.type === "success" ? <CheckCircle className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+                        <AlertDescription>{notice.text}</AlertDescription>
                     </Alert>
                 )}
 
-                <Card className="glass border-white/20">
+                <Card>
                     <CardHeader>
-                        <CardTitle className="text-white flex items-center gap-2"><Upload className="h-5 w-5" /> Upload image</CardTitle>
-                        <CardDescription className="text-slate-300">Add a new image to the public gallery.</CardDescription>
+                        <CardTitle className="flex items-center gap-2"><Upload className="h-5 w-5" /> Upload image</CardTitle>
+                        <CardDescription>Add a new image to the public gallery.</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleUpload} className="grid gap-5">
                             <div className="space-y-2">
-                                <Label htmlFor="image" className="text-white">Image file</Label>
-                                <Input id="image" name="image" type="file" accept="image/*" required className="glass border-white/20 text-white bg-white/5" />
+                                <Label htmlFor="image">Image file</Label>
+                                <Input id="image" name="image" type="file" accept="image/*" required />
                             </div>
                             <div className="grid sm:grid-cols-2 gap-5">
                                 <div className="space-y-2">
-                                    <Label htmlFor="title" className="text-white">Title</Label>
-                                    <Input id="title" name="title" required className="h-12 glass border-white/20 text-white bg-white/5" />
+                                    <Label htmlFor="title">Title</Label>
+                                    <Input id="title" name="title" required className="h-12" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="aiModel" className="text-white">AI model</Label>
-                                    <Input id="aiModel" name="aiModel" required placeholder="Midjourney, Flux, DALL-E..." className="h-12 glass border-white/20 text-white bg-white/5" />
+                                    <Label htmlFor="aiModel">AI model</Label>
+                                    <Input id="aiModel" name="aiModel" required placeholder="Midjourney, Flux, DALL-E..." className="h-12" />
                                 </div>
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="description" className="text-white">Description</Label>
-                                <Textarea id="description" name="description" rows={3} className="glass border-white/20 text-white bg-white/5" />
+                                <Label htmlFor="description">Description</Label>
+                                <Textarea id="description" name="description" rows={3} />
                             </div>
                             <div className="space-y-2">
-                                <Label className="text-white">Tags</Label>
+                                <Label>Tags</Label>
                                 <TagEditor tags={tags} onChange={setTags} />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="prompts" className="text-white">Prompts</Label>
-                                <Textarea id="prompts" name="prompts" rows={4} className="glass border-white/20 text-white bg-white/5" />
+                                <Label htmlFor="prompts">Prompts</Label>
+                                <Textarea id="prompts" name="prompts" rows={4} />
                             </div>
-                            <Button type="submit" disabled={uploading || tags.length === 0} className="h-12 bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                            <Button type="submit" disabled={uploading || tags.length === 0} className="h-12">
                                 {uploading ? "Uploading..." : "Upload image"}
                             </Button>
                         </form>
@@ -310,35 +312,35 @@ export default function AdminPage() {
                 </Card>
 
                 <section className="space-y-4">
-                    <h2 className="text-2xl font-semibold text-white">Library</h2>
+                    <h2 className="display text-2xl font-extrabold">Library</h2>
                     {images.length === 0 ? (
-                        <p className="text-slate-300">No images in the gallery yet.</p>
+                        <p className="text-ink-2">No images in the gallery yet.</p>
                     ) : (
-                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                             {images.map((image) => (
-                                <Card key={image._id} className="glass border-white/20 overflow-hidden">
-                                    <div className="relative h-44 bg-slate-900">
+                                <Card key={image._id} className="overflow-hidden shadow-sticker-sm">
+                                    <div className="relative h-44 border-b-2 border-ink bg-empty">
                                         {/* eslint-disable-next-line @next/next/no-img-element */}
                                         <img src={image.uri} alt={image.title || image.fileName} className="h-full w-full object-cover" />
                                     </div>
-                                    <CardContent className="p-4 space-y-3">
+                                    <CardContent className="space-y-3 p-4">
                                         <div>
-                                            <p className="text-white font-semibold truncate">{image.title || image.fileName}</p>
-                                            <p className="text-sm text-purple-200">{image.aiModel}</p>
-                                            {image.description && <p className="text-sm text-slate-300 line-clamp-2 mt-1">{image.description}</p>}
+                                            <p className="display truncate text-lg font-extrabold">{image.title || image.fileName}</p>
+                                            <p className="text-sm font-semibold text-sun">{image.aiModel}</p>
+                                            {image.description && <p className="mt-1 line-clamp-2 text-sm text-ink-2">{image.description}</p>}
                                         </div>
-                                        <div className="flex gap-2">
-                                            <Button type="button" onClick={() => openEditor(image)} className="glass border border-white/20 text-white hover:bg-white/10">
-                                                <Pencil className="h-4 w-4 mr-1" />
+                                        <div className="flex flex-wrap gap-2">
+                                            <Button type="button" onClick={() => openEditor(image)} variant="outline" size="sm">
+                                                <Pencil className="h-4 w-4" />
                                                 Edit
                                             </Button>
                                             {pendingDelete === image._id ? (
-                                                <Button type="button" onClick={() => handleDelete(image._id)} className="bg-red-600 hover:bg-red-500 text-white">
+                                                <Button type="button" onClick={() => handleDelete(image._id)} variant="destructive" size="sm">
                                                     Confirm
                                                 </Button>
                                             ) : (
-                                                <Button type="button" onClick={() => setPendingDelete(image._id)} className="glass border border-white/20 text-white hover:bg-white/10">
-                                                    <Trash2 className="h-4 w-4 mr-1" />
+                                                <Button type="button" onClick={() => setPendingDelete(image._id)} variant="outline" size="sm">
+                                                    <Trash2 className="h-4 w-4" />
                                                     Delete
                                                 </Button>
                                             )}
@@ -350,16 +352,16 @@ export default function AdminPage() {
                     )}
                     {totalPages > 1 && (
                         <div className="flex justify-center gap-3">
-                            <Button disabled={page === 0} onClick={() => setPage(page - 1)} className="glass border border-white/20 text-white">Previous</Button>
-                            <span className="text-slate-300 self-center">Page {page + 1} of {totalPages}</span>
-                            <Button disabled={page >= totalPages - 1} onClick={() => setPage(page + 1)} className="glass border border-white/20 text-white">Next</Button>
+                            <Button disabled={page === 0} onClick={() => setPage(page - 1)} variant="outline" size="sm">Previous</Button>
+                            <span className="self-center text-ink-2">Page {page + 1} of {totalPages}</span>
+                            <Button disabled={page >= totalPages - 1} onClick={() => setPage(page + 1)} variant="outline" size="sm">Next</Button>
                         </div>
                     )}
                 </section>
             </div>
 
             <Dialog open={Boolean(editing)} onOpenChange={(open) => { if (!open) setEditing(null); }}>
-                <DialogContent className="glass border-white/20 bg-slate-950 text-white max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-h-[90vh] overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle>Edit image</DialogTitle>
                     </DialogHeader>
@@ -367,15 +369,15 @@ export default function AdminPage() {
                         <form onSubmit={handleSave} className="grid gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="edit-title">Title</Label>
-                                <Input id="edit-title" name="title" defaultValue={editing.title} required className="glass border-white/20 bg-white/5 text-white" />
+                                <Input id="edit-title" name="title" defaultValue={editing.title} required />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="edit-description">Description</Label>
-                                <Textarea id="edit-description" name="description" defaultValue={editing.description} rows={3} className="glass border-white/20 bg-white/5 text-white" />
+                                <Textarea id="edit-description" name="description" defaultValue={editing.description} rows={3} />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="edit-model">AI model</Label>
-                                <Input id="edit-model" name="aiModel" defaultValue={editing.aiModel} required className="glass border-white/20 bg-white/5 text-white" />
+                                <Input id="edit-model" name="aiModel" defaultValue={editing.aiModel} required />
                             </div>
                             <div className="space-y-2">
                                 <Label>Tags</Label>
@@ -383,9 +385,9 @@ export default function AdminPage() {
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="edit-prompts">Prompts</Label>
-                                <Textarea id="edit-prompts" name="prompts" defaultValue={editing.prompts} rows={4} className="glass border-white/20 bg-white/5 text-white" />
+                                <Textarea id="edit-prompts" name="prompts" defaultValue={editing.prompts} rows={4} />
                             </div>
-                            <Button type="submit" disabled={saving} className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+                            <Button type="submit" disabled={saving}>
                                 {saving ? "Saving..." : "Save changes"}
                             </Button>
                         </form>

@@ -42,7 +42,7 @@ export const GalleryContext = createContext<{
 export function GalleryProvider({ children }: { children: React.ReactNode }) {
     const [images, setImages] = useState<IFile[]>([]);
     const [totalPages, setTotalPage] = useState(1);
-    const LIMIT = 9;
+    const LIMIT = 18;
     const [likedImages, setLikedImages] = useState<string[]>(getLikedImagesFromStorage());
 
     const fetchImages = async (page: number, sortBy: string = 'createdAt', sortOrder: string = 'desc') => {
@@ -83,8 +83,11 @@ export function GalleryProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         fetchImages(0).then(data => {
-            setImages(data.rows);
-            setTotalPage(Math.ceil(data.total / LIMIT))
+            setImages(data?.rows ?? []);
+            setTotalPage(Math.ceil((data?.total ?? 0) / LIMIT))
+        }).catch(() => {
+            setImages([]);
+            setTotalPage(1);
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])

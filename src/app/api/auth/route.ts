@@ -1,61 +1,67 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
+import {
+    ADMIN_COOKIE,
+    credentialsMatch,
+    isAdminRequest,
+    sessionCookieOptions,
+    signSession,
+} from "@/app/lib/adminAuth";
+
+export async function GET(request: NextRequest) {
+    return NextResponse.json({ authenticated: isAdminRequest(request) });
+}
 
 export async function POST(request: NextRequest) {
-  try {
-    const { username, password } = await request.json();
+    try {
+        const body = await request.json();
+        const username = typeof body?.username === "string" ? body.username : "";
+        const password = typeof body?.password === "string" ? body.password : "";
 
-    // Get credentials from environment variables
-    const validUsername = process.env.USERNAME;
-    const validPassword = process.env.PASSWORD;
+        const validUsername = process.env.USERNAME;
+        const validPassword = process.env.PASSWORD;
 
-    // Debug logging (remove in production)
-    console.log('Auth attempt:', { 
-      providedUsername: username, 
-      providedPassword: password ? '[HIDDEN]' : 'undefined',
-      validUsername: validUsername ? '[SET]' : 'undefined',
-      validPassword: validPassword ? '[SET]' : 'undefined'
-    });
-
-    // Check if credentials are provided
-    if (!validUsername || !validPassword) {
-      console.log('Environment variables not configured');
-      
-      // For development, allow a default login if no env vars are set
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Development mode - using default credentials');
-        if (username === 'admin' && password === 'password') {
-          return NextResponse.json(
-            { success: true, message: 'Login successful (dev mode)' },
-            { status: 200 }
-          );
+        if (!validUsername || !validPassword) {
+            return NextResponse.json(
+                { error: "Authentication not configured. Please set USERNAME and PASSWORD environment variables." },
+                { status: 500 }
+            );
         }
-      }
-      
-      return NextResponse.json(
-        { error: 'Authentication not configured. Please set USERNAME and PASSWORD environment variables.' },
-        { status: 500 }
-      );
-    }
 
-    // Validate credentials
-    if (username === validUsername && password === validPassword) {
-      console.log('Login successful');
-      return NextResponse.json(
-        { success: true, message: 'Login successful' },
-        { status: 200 }
-      );
-    } else {
-      console.log('Login failed - invalid credentials');
-      return NextResponse.json(
-        { error: 'Invalid username or password' },
-        { status: 401 }
-      );
+        if (!credentialsMatch(username, validUsername) || !credentialsMatch(password, validPassword)) {
+            return NextResponse.json(
+                { error: "Invalid username or password" },
+                { status: 401 }
+            );
+        }
+
+        const token = signSession(validUsername);
+        if (!token) {
+            return NextResponse.json(
+                { error: "Authentication not configured. Please set USERNAME and PASSWORD environment variables." },
+                { status: 500 }
+            );
+        }
+
+        const response = NextResponse.json({ success: true, message: "Login successful" });
+        response.cookies.set(ADMIN_COOKIE, token, sessionCookieOptions());
+        return response;
+    } catch (error) {
+        console.error("Auth error:", error);
+        return NextResponse.json(
+            { error: "Internal server error" },
+            { status: 500 }
+        );
     }
-  } catch (error) {
-    console.error('Auth error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
-} 
+}
+
+export async function DELETE() {
+    const response = NextResponse.json({ success: true });
+    response.cookies.set(ADMIN_COOKIE, "", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 0,
+    });
+    return response;
+}

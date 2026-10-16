@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  --color-paper: #15110c;
-  --color-ink: #f1e6d6;
-  --color-ink-2: #bbafa0;
-  --color-ink-3: #9c9083;
+  --color-paper: #f7f3ec;
+  --color-ink: #241c16;
+  --color-ink-2: #6d6258;
+  --color-ink-3: #8a7d72;
   --color-accent: #f65b25;
   --color-accent-hover: #e44a08;
   --color-sun: #d8a438;
@@ -12,19 +12,19 @@
   --color-rose: #d87da2;
   --color-sky: #5facd3;
   --color-peach: #f69f72;
-  --color-card: #241e18;
-  --color-empty: #41392e;
+  --color-card: #fffdf8;
+  --color-empty: #efe6d8;
   --color-mint: #77b779;
-  --color-watch: #3f2909;
-  --color-watch-copy: #efcc8c;
+  --color-watch: #fff6e8;
+  --color-watch-copy: #241c16;
   --color-on-accent: #22110c;
   --color-on-sun: #241803;
   --color-on-mint: #091b0a;
   --color-on-rose: #201018;
   --radius-sticker: 14px;
-  --shadow-sticker: 4px 4px 0 #020201;
-  --shadow-sticker-sm: 3px 3px 0 #020201;
-  --shadow-sticker-lg: 5px 5px 0 #020201;
+  --shadow-sticker: 2px 2px 0 #e4d9cb;
+  --shadow-sticker-sm: 2px 2px 0 #e4d9cb;
+  --shadow-sticker-lg: 3px 3px 0 #e4d9cb;
 }
 
 @theme inline {
@@ -35,7 +35,7 @@
 
 @layer base {
   html {
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   * {
@@ -147,13 +147,13 @@
 @media (hover: hover) and (pointer: fine) {
   .lift:hover {
     transform: translate(-1px, -1px);
-    box-shadow: 5px 5px 0 #020201;
+    box-shadow: 3px 3px 0 #e4d9cb;
   }
 }
 
 .lift:active {
-  transform: translate(2px, 2px);
-  box-shadow: 0 0 0 #020201;
+  transform: translate(1px, 1px);
+  box-shadow: 0 0 0 #e4d9cb;
 }
 
 .lift:disabled,

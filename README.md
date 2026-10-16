@@ -1,28 +1,25 @@
 # AI Gallery
 
-A modern web application for showcasing AI-generated artwork with advanced filtering, sorting, and upload capabilities.
+A photo gallery for AI-generated artwork, with a private admin panel for uploads and edits.
 
 ## Features
 
-- **Image Gallery**: Browse AI-generated images with responsive grid layout
-- **Advanced Filtering**: Filter by AI model and tags
-- **Sorting Options**: Sort by date, popularity, or filename
-- **Upload System**: Secure upload with authentication
-- **Like System**: Interactive like functionality
-- **Responsive Design**: Mobile-friendly interface
-- **Modal View**: Full-screen image viewing
+- **Photo gallery**: Bento grid of images on the homepage
+- **Filtering and sorting**: Filter by AI model and tags, and sort by date, popularity, or filename
+- **Admin panel**: Sign in at `/admin` to upload images and change title, description, model, tags, and prompts
+- **Like system**: Visitors can like images
 
-## Environment Variables
+## Environment variables
 
-To configure the application, you need to set the following environment variables in your Vercel deployment:
+### Authentication
 
-### Authentication (Required)
 ```bash
-USERNAME=your_upload_username
-PASSWORD=your_upload_password
+USERNAME=your_admin_username
+PASSWORD=your_admin_password
 ```
 
-### Database (Optional - if using MongoDB)
+### Database
+
 ```bash
 MONGODB_URI=your_mongodb_connection_string
 MONGODB_USER=your_mongodb_username
@@ -30,33 +27,34 @@ MONGODB_PASS=your_mongodb_password
 MONGODB_DBNAME=your_database_name
 ```
 
-### Cloud Storage (Optional - if using Cloudflare R2)
+### Cloudflare R2
+
 ```bash
 R2_ACCOUNT_ID=your_r2_account_id
 R2_ACCESS_KEY_ID=your_r2_access_key_id
 R2_SECRET_ACCESS_KEY=your_r2_secret_access_key
-R2_BUCKET_NAME=your_r2_bucket_name
+R2_BUCKET=your_r2_bucket_name
+R2_PUBLIC_URL=https://your-public-r2-host
 ```
 
 ## Setup
 
 1. Clone the repository
 2. Install dependencies: `npm install`
-3. Set up environment variables in Vercel dashboard
-4. Deploy to Vercel
+3. Copy `.env.example` and set the variables above
+4. Run `npm run dev`
 
 ## Usage
 
-- **Browse Gallery**: Visit the home page to view all uploaded images
-- **Upload Images**: Navigate to `/upload` and login with your credentials
-- **Filter & Sort**: Use the controls to find specific images
-- **Like Images**: Click the heart icon to like images
+- **Browse**: The homepage is the gallery
+- **Manage images**: Open `/admin` and sign in with `USERNAME` and `PASSWORD`
+- **Filter and sort**: Use the controls above the gallery
 
-## Technology Stack
+## Technology stack
 
-- **Frontend**: Next.js 15, React 18, TypeScript
+- **Frontend**: Next.js 15, React 19, TypeScript
 - **Styling**: Tailwind CSS v4
-- **UI Components**: Radix UI, Lucide React icons
+- **UI components**: Radix UI, Lucide React icons
 - **Backend**: Next.js API routes
-- **Database**: MongoDB (optional)
-- **Storage**: Cloudflare R2 (optional)
+- **Database**: MongoDB
+- **Storage**: Cloudflare R2

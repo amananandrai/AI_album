@@ -104,8 +104,8 @@ export function ImageGallery() {
     }, [isModalOpen]);
 
     const galleryImages = images || [];
-    const allModels = Array.from(new Set(galleryImages.map(img => img.aiModel).filter(Boolean)));
-    const allTags = Array.from(new Set(galleryImages.flatMap(img => img.tags || []).filter(Boolean)));
+    const allModels = Array.from(new Set(galleryImages.map(img => img.aiModel).filter((model): model is string => Boolean(model))));
+    const allTags = Array.from(new Set(galleryImages.flatMap(img => img.tags || []).filter((tag): tag is string => Boolean(tag))));
 
     const filteredImages = galleryImages.filter(image => {
         const matchesModel = selectedModel === 'all' || !selectedModel || image.aiModel === selectedModel;

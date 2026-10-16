@@ -5,6 +5,7 @@ import UploadedImage from "@/app/models/Files";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { v4 as uuidv4 } from "uuid";
 import { isAdminRequest, unauthorizedResponse } from "@/app/lib/adminAuth";
+import { readImageSize } from "@/app/lib/imageSize";
 
 const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID!;
 const R2_SECRET_ACCESS_KEY = process.env.R2_SECRET_ACCESS_KEY!;
@@ -81,6 +82,7 @@ export async function POST(request: NextRequest) {
     try {
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
+        const size = readImageSize(buffer);
         const ext = file.name.split(".").pop() || "jpg";
         const key = `uploads/${uuidv4()}.${ext}`;
 
@@ -103,6 +105,8 @@ export async function POST(request: NextRequest) {
             aiModel,
             prompts,
             uri,
+            width: size?.width,
+            height: size?.height,
             createdAt: new Date(),
         });
 

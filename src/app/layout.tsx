@@ -1,10 +1,19 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Baloo_2 } from "next/font/google";
 import "./globals.css";
 import { GalleryProvider } from "./context/gallery";
 import { Navbar } from "@/components/ui/navbar";
 
-const inter = Inter({ subsets: ["latin"] });
+const baloo = Baloo_2({
+  subsets: ["latin"],
+  weight: ["700", "800"],
+  variable: "--font-baloo",
+  display: "swap",
+});
+
+export const viewport: Viewport = {
+  themeColor: "#15110c",
+};
 
 export const metadata: Metadata = {
   title: "AI Gallery",
@@ -23,8 +32,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
+    <html lang="en" className={baloo.variable}>
+      <body>
         <GalleryProvider>
           <Navbar />
           {children}

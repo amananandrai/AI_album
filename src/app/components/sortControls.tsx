@@ -47,36 +47,39 @@ export function SortControls({ sortBy, sortOrder, onSortChange }: SortControlsPr
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 items-start lg:items-center justify-between mb-8 p-8 glass border border-white/20 rounded-xl shadow-2xl animate-fade-in">
-      <div className="flex items-center gap-4">
-        <div className="w-10 h-10 gradient-primary rounded-xl flex items-center justify-center shadow-lg">
-          <ArrowUpDown className="h-5 w-5 text-white" />
+    <div className="rise flex flex-col gap-4 rounded-sticker border-2 border-ink bg-card p-4 shadow-sticker sm:flex-row sm:items-center sm:justify-between sm:p-5">
+      <div className="flex items-center gap-3">
+        <div className="grid h-10 w-10 place-items-center rounded-full border-2 border-ink bg-sun text-on-sun shadow-sticker-sm">
+          <ArrowUpDown className="h-4 w-4" />
         </div>
-        <span className="font-semibold text-white text-lg">Sort Gallery:</span>
+        <div>
+          <p className="kicker">Sort</p>
+          <p className="display text-lg font-extrabold">Gallery order</p>
+        </div>
       </div>
-      
-      <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+
+      <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
         <Select value={sortBy} onValueChange={handleSortByChange}>
-          <SelectTrigger className="w-full sm:w-[220px] lg:w-[240px] glass border border-white/20 text-white hover:bg-white/10 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500">
+          <SelectTrigger className="w-full sm:w-[220px]" aria-label="Sort by">
             <SelectValue placeholder="Sort by">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 {sortOptions.find(opt => opt.value === sortBy)?.icon && (
-                  <span className="h-5 w-5">
-                    {React.createElement(sortOptions.find(opt => opt.value === sortBy)!.icon, { className: "h-5 w-5" })}
+                  <span className="h-4 w-4">
+                    {React.createElement(sortOptions.find(opt => opt.value === sortBy)!.icon, { className: "h-4 w-4" })}
                   </span>
                 )}
-                <span className="font-medium">{getCurrentSortOption()}</span>
+                <span>{getCurrentSortOption()}</span>
               </div>
             </SelectValue>
           </SelectTrigger>
-          <SelectContent className="glass border border-white/20 bg-slate-900/90 backdrop-blur-md">
+          <SelectContent>
             {sortOptions.map((option) => {
               const IconComponent = option.icon;
               return (
-                <SelectItem key={option.value} value={option.value} className="text-white hover:bg-white/10 px-4 py-3 focus:bg-white/10">
-                  <div className="flex items-center gap-3">
-                    <IconComponent className="h-5 w-5" />
-                    <span className="font-medium">{option.label}</span>
+                <SelectItem key={option.value} value={option.value}>
+                  <div className="flex items-center gap-2">
+                    <IconComponent className="h-4 w-4" />
+                    <span>{option.label}</span>
                   </div>
                 </SelectItem>
               );
@@ -85,26 +88,26 @@ export function SortControls({ sortBy, sortOrder, onSortChange }: SortControlsPr
         </Select>
 
         <Select value={sortOrder} onValueChange={handleSortOrderChange}>
-          <SelectTrigger className="w-full sm:w-[200px] lg:w-[220px] glass border border-white/20 text-white hover:bg-white/10 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500">
+          <SelectTrigger className="w-full sm:w-[200px]" aria-label="Sort order">
             <SelectValue>
-              <span className="font-medium">{getCurrentOrderOption()}</span>
+              <span>{getCurrentOrderOption()}</span>
             </SelectValue>
           </SelectTrigger>
-          <SelectContent className="glass border border-white/20 bg-slate-900/90 backdrop-blur-md">
+          <SelectContent>
             {sortBy === 'likes' ? (
               <>
-                <SelectItem value="desc" className="text-white hover:bg-white/10 px-4 py-3 focus:bg-white/10">Most Popular</SelectItem>
-                <SelectItem value="asc" className="text-white hover:bg-white/10 px-4 py-3 focus:bg-white/10">Least Popular</SelectItem>
+                <SelectItem value="desc">Most Popular</SelectItem>
+                <SelectItem value="asc">Least Popular</SelectItem>
               </>
             ) : sortBy === 'fileName' ? (
               <>
-                <SelectItem value="asc" className="text-white hover:bg-white/10 px-4 py-3 focus:bg-white/10">A to Z</SelectItem>
-                <SelectItem value="desc" className="text-white hover:bg-white/10 px-4 py-3 focus:bg-white/10">Z to A</SelectItem>
+                <SelectItem value="asc">A to Z</SelectItem>
+                <SelectItem value="desc">Z to A</SelectItem>
               </>
             ) : (
               <>
-                <SelectItem value="desc" className="text-white hover:bg-white/10 px-4 py-3 focus:bg-white/10">Newest First</SelectItem>
-                <SelectItem value="asc" className="text-white hover:bg-white/10 px-4 py-3 focus:bg-white/10">Oldest First</SelectItem>
+                <SelectItem value="desc">Newest First</SelectItem>
+                <SelectItem value="asc">Oldest First</SelectItem>
               </>
             )}
           </SelectContent>
